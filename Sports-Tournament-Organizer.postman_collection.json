@@ -380,15 +380,14 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/tournaments/1",
+							"raw": "localhost:8080/api/tournaments",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
 								"api",
-								"tournaments",
-								"1"
+								"tournaments"
 							]
 						}
 					},
@@ -903,15 +902,14 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/teams/1",
+							"raw": "localhost:8080/api/teams",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
 								"api",
-								"teams",
-								"1"
+								"teams"
 							]
 						}
 					},
@@ -1000,12 +998,13 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/auth/login",
+									"raw": "localhost:8080/api/auth/login",
 									"host": [
 										"localhost"
 									],
 									"port": "8080",
 									"path": [
+										"api",
 										"auth",
 										"login"
 									]
@@ -1028,12 +1027,13 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/auth/forgot-password",
+									"raw": "localhost:8080/api/auth/forgot-password",
 									"host": [
 										"localhost"
 									],
 									"port": "8080",
 									"path": [
+										"api",
 										"auth",
 										"forgot-password"
 									]
@@ -1056,12 +1056,13 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/auth/reset-password",
+									"raw": "localhost:8080/api/auth/reset-password",
 									"host": [
 										"localhost"
 									],
 									"port": "8080",
 									"path": [
+										"api",
 										"auth",
 										"reset-password"
 									]
@@ -1084,14 +1085,44 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/auth/register",
+									"raw": "localhost:8080/api/auth/register",
 									"host": [
 										"localhost"
 									],
 									"port": "8080",
 									"path": [
+										"api",
 										"auth",
 										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Email verification",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"token\": \"some-token\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8080/api/auth/verify-email",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"auth",
+										"verify-email"
 									]
 								}
 							},
@@ -1193,6 +1224,81 @@
 								"api",
 								"profiles",
 								"me"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Notifications",
+			"item": [
+				{
+					"name": "Send Tournament Notification",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "some-token",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"tournamentId\": 1,\r\n    \"message\": \"The schedule for the group stage is now available!\",\r\n    \"recipientType\": \"all\" // or teams, or followers\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/notifications/tournaments",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"notifications",
+								"tournaments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all notifications for given tournament",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "some-token",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/notifications/tournaments/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"notifications",
+								"tournaments",
+								"1"
 							]
 						}
 					},
