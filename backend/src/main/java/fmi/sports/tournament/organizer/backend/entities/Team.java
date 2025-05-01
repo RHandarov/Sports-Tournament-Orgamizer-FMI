@@ -1,0 +1,91 @@
+package fmi.sports.tournament.organizer.backend.entities;
+
+import java.util.Set;
+
+public class Team {
+    private Long id;
+    private String name;
+    private String email;
+    private Double budget;
+    private Integer size;
+    private String secretCode;
+    //TODO: add other columns in DB model
+    private Set<Participant> participants;
+    private Set<User> followers;
+
+    public Team(String name,
+                String email,
+                Double budget,
+                Integer size,
+                String secretCode,
+                Set<Participant> participants,
+                Set<User> followers) {
+        this.name = name;
+        this.email = email;
+        this.budget = budget;
+        this.size = size;
+        this.secretCode = secretCode;
+        this.participants = participants;
+        this.followers = followers;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public Double getBudget() {
+        return budget;
+    }
+
+    public Integer getSize() {
+        return size;
+    }
+
+    public String getSecretCode() {
+        return secretCode;
+    }
+
+    public Set<Participant> getParticipants() {
+        return participants;
+    }
+
+    public Set<User> getFollowers() {
+        return followers;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setBudget(Double budget) {
+        this.budget = budget;
+    }
+
+    public void setSize(Integer size) {
+        this.size = size;
+    }
+
+    public void setSecretCode(String secretCode) {
+        this.secretCode = secretCode;
+    }
+
+    public void setParticipants(Set<Participant> participants) {
+        this.participants = participants;
+    }
+
+    public void setFollowers(Set<User> followers) {
+        this.followers = followers;
+    }
+}
