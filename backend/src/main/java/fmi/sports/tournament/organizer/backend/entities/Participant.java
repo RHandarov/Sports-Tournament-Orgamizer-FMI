@@ -1,8 +1,19 @@
 package fmi.sports.tournament.organizer.backend.entities;
 
+import jakarta.persistence.*;
+
+@Entity
 public class Participant {
+    @Id
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "team_id")
     private Team team;
+
+    @Enumerated(EnumType.STRING)
     private ParticipantCategory category;
 
     public Participant(User user, Team team, ParticipantCategory category) {

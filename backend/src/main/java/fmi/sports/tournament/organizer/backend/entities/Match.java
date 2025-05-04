@@ -1,13 +1,31 @@
 package fmi.sports.tournament.organizer.backend.entities;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "match1") // TODO: figure out appropriate name because this is problematic
 public class Match {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "tournament_id", referencedColumnName = "id")
     private Tournament tournament;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "team_1")
     private Team team1;
     private Integer team1Points;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "team_2")
     private Team team2;
     private Integer team2Points;
+
     private String venue;
+
+    @Enumerated(EnumType.STRING)
     private MatchStatus status;
 
     public Match(Tournament tournament,

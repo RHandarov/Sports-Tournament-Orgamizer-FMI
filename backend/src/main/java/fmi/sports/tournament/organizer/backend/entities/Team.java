@@ -1,8 +1,13 @@
 package fmi.sports.tournament.organizer.backend.entities;
 
+import jakarta.persistence.*;
+
 import java.util.Set;
 
+@Entity
 public class Team {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String email;
@@ -10,7 +15,11 @@ public class Team {
     private Integer size;
     private String secretCode;
     //TODO: add other columns in DB model
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "team")
     private Set<Participant> participants;
+
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "followedTeams")
     private Set<User> followers;
 
     public Team(String name,
