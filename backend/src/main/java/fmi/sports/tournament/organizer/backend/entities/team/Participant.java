@@ -1,15 +1,17 @@
-package fmi.sports.tournament.organizer.backend.entities;
+package fmi.sports.tournament.organizer.backend.entities.team;
 
+import fmi.sports.tournament.organizer.backend.entities.user.User;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "participants")
 public class Participant {
     @Id
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "team_id")
     private Team team;
 

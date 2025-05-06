@@ -1,10 +1,11 @@
-package fmi.sports.tournament.organizer.backend.entities;
+package fmi.sports.tournament.organizer.backend.entities.tournament;
 
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "tournaments")
 public class Tournament {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

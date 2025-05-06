@@ -1,11 +1,14 @@
-package fmi.sports.tournament.organizer.backend.entities;
+package fmi.sports.tournament.organizer.backend.entities.user;
 
+import fmi.sports.tournament.organizer.backend.entities.team.Participant;
+import fmi.sports.tournament.organizer.backend.entities.team.Team;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,11 +24,11 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @OneToOne(mappedBy = "user", orphanRemoval = true)
+    @OneToOne(mappedBy = "user")
     private Participant participant;
 
     @ManyToMany
-    @JoinTable(name = "follower",
+    @JoinTable(name = "followers",
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "team_id"))
     private Set<Team> followedTeams;

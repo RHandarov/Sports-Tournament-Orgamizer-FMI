@@ -1,9 +1,11 @@
-package fmi.sports.tournament.organizer.backend.entities;
+package fmi.sports.tournament.organizer.backend.entities.tournament.match;
 
+import fmi.sports.tournament.organizer.backend.entities.team.Team;
+import fmi.sports.tournament.organizer.backend.entities.tournament.Tournament;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "match1") // TODO: figure out appropriate name because this is problematic
+@Table(name = "matches")
 public class Match {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

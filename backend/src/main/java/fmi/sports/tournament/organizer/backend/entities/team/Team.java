@@ -1,10 +1,12 @@
-package fmi.sports.tournament.organizer.backend.entities;
+package fmi.sports.tournament.organizer.backend.entities.team;
 
+import fmi.sports.tournament.organizer.backend.entities.user.User;
 import jakarta.persistence.*;
 
 import java.util.Set;
 
 @Entity
+@Table(name = "teams")
 public class Team {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,10 +18,10 @@ public class Team {
     private String secretCode;
     //TODO: add other columns in DB model
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "team")
+    @OneToMany(mappedBy = "team")
     private Set<Participant> participants;
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "followedTeams")
+    @ManyToMany(mappedBy = "followedTeams")
     private Set<User> followers;
 
     public Team(String name,
