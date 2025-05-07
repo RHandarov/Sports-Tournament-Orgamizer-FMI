@@ -9,9 +9,12 @@ import java.time.LocalDateTime;
 @Table(name = "tokens")
 public class Token {
     @Id
+    private Long userId;
+
+    @MapsId
     @OneToOne
-    @JoinColumn(name = "user_id")
     private User user;
+
     private String token;
     private LocalDateTime expires;
 

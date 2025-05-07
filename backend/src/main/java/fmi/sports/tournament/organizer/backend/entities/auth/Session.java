@@ -9,8 +9,10 @@ import java.time.LocalDateTime;
 @Table(name = "sessions")
 public class Session {
     @Id
+    private Long userId;
+
+    @MapsId
     @OneToOne
-    @JoinColumn(name = "user_id")
     private User user;
     private String sessionId;
     private LocalDateTime expires;

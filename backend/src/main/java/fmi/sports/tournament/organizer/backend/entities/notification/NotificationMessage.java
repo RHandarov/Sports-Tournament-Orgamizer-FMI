@@ -3,7 +3,7 @@ package fmi.sports.tournament.organizer.backend.entities.notification;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "message")
+@Table(name = "messages")
 public class NotificationMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

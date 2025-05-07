@@ -7,15 +7,20 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "notifications")
+@IdClass(NotificationId.class)
 public class Notification {
     @Id
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    private Long userId;
 
     @Id
+    private Long messageId;
+
+    @MapsId("userId")
     @ManyToOne
-    @JoinColumn(name = "message_id")
+    private User user;
+
+    @MapsId("messageId")
+    @ManyToOne
     private NotificationMessage message;
     private LocalDateTime creationTime;
     private boolean isRead;
