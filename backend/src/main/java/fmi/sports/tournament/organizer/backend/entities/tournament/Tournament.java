@@ -12,22 +12,26 @@ public class Tournament {
     private Long id;
     private String name;
     private String location;
-    private final String type;
+    private String sportType;
     private LocalDate startDate;
     private LocalDate endDate;
     private Double registrationFee;
     private Integer maxTeams;
 
+    public Tournament() {
+
+    }
+
     public Tournament(String name,
                       String location,
-                      String type,
+                      String sportType,
                       LocalDate startDate,
                       LocalDate endDate,
                       Double registrationFee,
                       Integer maxTeams) {
         this.name = name;
         this.location = location;
-        this.type = type;
+        this.sportType = sportType;
         this.startDate = startDate;
         this.endDate = endDate;
         this.registrationFee = registrationFee;
@@ -46,8 +50,8 @@ public class Tournament {
         return location;
     }
 
-    public String getType() {
-        return type;
+    public String getSportType() {
+        return sportType;
     }
 
     public LocalDate getStartDate() {
@@ -64,6 +68,10 @@ public class Tournament {
 
     public Integer getMaxTeams() {
         return maxTeams;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setName(String name) {

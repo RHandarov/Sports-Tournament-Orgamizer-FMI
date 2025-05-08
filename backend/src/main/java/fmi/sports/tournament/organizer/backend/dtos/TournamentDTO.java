@@ -3,12 +3,12 @@ package fmi.sports.tournament.organizer.backend.dtos;
 import java.time.LocalDate;
 
 public class TournamentDTO {
-    private static final Long ID_NOT_SET = -1L;
+    public static final Long ID_NOT_SET = -1L;
 
     private Long id;
     private String name;
     private String location;
-    private final String type;
+    private String sportType;
     private LocalDate startDate;
     private LocalDate endDate;
     private Double registrationFee;
@@ -16,7 +16,7 @@ public class TournamentDTO {
 
     public TournamentDTO(String name,
                          String location,
-                         String type,
+                         String sportType,
                          LocalDate startDate,
                          LocalDate endDate,
                          Double registrationFee,
@@ -24,7 +24,7 @@ public class TournamentDTO {
         this.id = ID_NOT_SET;
         this.name = name;
         this.location = location;
-        this.type = type;
+        this.sportType = sportType;
         this.startDate = startDate;
         this.endDate = endDate;
         this.registrationFee = registrationFee;
@@ -43,8 +43,8 @@ public class TournamentDTO {
         return location;
     }
 
-    public String getType() {
-        return type;
+    public String getSportType() {
+        return sportType;
     }
 
     public LocalDate getStartDate() {
@@ -89,5 +89,9 @@ public class TournamentDTO {
 
     public void setMaxTeams(Integer maxTeams) {
         this.maxTeams = maxTeams;
+    }
+
+    public void setSportType(String sportType) {
+        this.sportType = sportType;
     }
 }
