@@ -18,6 +18,10 @@ public class Participant {
     @Enumerated(EnumType.STRING)
     private ParticipantCategory category;
 
+    public Participant() {
+
+    }
+
     public Participant(User user, Team team, ParticipantCategory category) {
         this.user = user;
         this.team = team;

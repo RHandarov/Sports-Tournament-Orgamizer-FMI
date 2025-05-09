@@ -33,6 +33,10 @@ public class User {
         inverseJoinColumns = @JoinColumn(name = "team_id"))
     private Set<Team> followedTeams;
 
+    public User() {
+
+    }
+
     public User(String firstName,
                 String lastName,
                 String email,

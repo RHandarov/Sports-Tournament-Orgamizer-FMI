@@ -1,7 +1,7 @@
 package fmi.sports.tournament.organizer.backend.services;
 
 import fmi.sports.tournament.organizer.backend.dtos.TournamentDTO;
-import fmi.sports.tournament.organizer.backend.dtos.mappers.TournamentDTOMapper;
+import fmi.sports.tournament.organizer.backend.entities.tournament.Tournament;
 import fmi.sports.tournament.organizer.backend.repositories.TournamentsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,31 +25,49 @@ public class TournamentServiceImpl implements TournamentService {
             return newTournament;
         }
 
-        return TournamentDTOMapper.toDTO(
-                tournamentsRepository.save(TournamentDTOMapper.toEntity(newTournament)));
+        Tournament entity = new Tournament(newTournament.getName(),
+                newTournament.getLocation(),
+                newTournament.getSportType(),
+                newTournament.getStartDate(),
+                newTournament.getEndDate(),
+                newTournament.getRegistrationFee(),
+                newTournament.getMaxTeams());
+
+        return TournamentDTO.fromEntity(tournamentsRepository.save(entity));
     }
 
     @Override
     public List<TournamentDTO> getAll() {
         return tournamentsRepository.findAll()
                 .stream()
-                .map(TournamentDTOMapper::toDTO)
+                .map(TournamentDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 
     @Override
     public Optional<TournamentDTO> getById(Long tournamentId) {
         return tournamentsRepository.findById(tournamentId)
-                .map(TournamentDTOMapper::toDTO);
+                .map(TournamentDTO::fromEntity);
     }
 
     @Override
     public boolean update(TournamentDTO updatedTournament) {
-        if (getById(updatedTournament.getId()).isEmpty()) {
+        Optional<Tournament> tournamentOptional =
+                tournamentsRepository.findById(updatedTournament.getId());
+        if (tournamentOptional.isEmpty()) {
             return false;
         }
 
-        tournamentsRepository.save(TournamentDTOMapper.toEntity(updatedTournament));
+        Tournament tournament = tournamentOptional.get();
+        tournament.setLocation(updatedTournament.getLocation());
+        tournament.setName(updatedTournament.getName());
+        tournament.setEndDate(updatedTournament.getEndDate());
+        tournament.setMaxTeams(updatedTournament.getMaxTeams());
+        tournament.setRegistrationFee(updatedTournament.getRegistrationFee());
+        tournament.setSportType(updatedTournament.getSportType());
+        tournament.setStartDate(updatedTournament.getStartDate());
+
+        tournamentsRepository.save(tournament);
         return true;
     }
 

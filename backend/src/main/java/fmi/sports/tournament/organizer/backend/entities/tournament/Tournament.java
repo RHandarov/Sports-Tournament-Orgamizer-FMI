@@ -97,4 +97,8 @@ public class Tournament {
     public void setMaxTeams(Integer maxTeams) {
         this.maxTeams = maxTeams;
     }
+
+    public void setSportType(String sportType) {
+        this.sportType = sportType;
+    }
 }

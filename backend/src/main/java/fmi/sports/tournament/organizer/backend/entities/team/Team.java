@@ -24,6 +24,10 @@ public class Team {
     @ManyToMany(mappedBy = "followedTeams")
     private Set<User> followers;
 
+    public Team() {
+
+    }
+
     public Team(String name,
                 String email,
                 Double budget,
