@@ -3,14 +3,13 @@ package fmi.sports.tournament.organizer.backend.entities.auth;
 import java.util.Random;
 
 public class TokenGenerator {
-    private static final int TOKEN_LENGTH = 128;
     private static final Random generator = new Random();
 
-    public static String generateRandomToken() {
-        StringBuilder token = new StringBuilder(TOKEN_LENGTH);
+    public static String generateRandomToken(int tokenLength) {
+        StringBuilder token = new StringBuilder(tokenLength);
 
         Random generator = new Random();
-        for (int i = 0; i < TOKEN_LENGTH; ++i) {
+        for (int i = 0; i < tokenLength; ++i) {
             token.append(generateNextSymbol());
         }
 

@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "sessions")
 public class Session {
+    private static final int TOKEN_LENGTH = 120;
+
     @Id
     private Long userId;
 
@@ -19,7 +21,7 @@ public class Session {
 
     public Session(User user, LocalDateTime expires) {
         this.user = user;
-        this.sessionId = TokenGenerator.generateRandomToken();
+        this.sessionId = TokenGenerator.generateRandomToken(TOKEN_LENGTH);
         this.expires = expires;
     }
 

@@ -1,38 +1,42 @@
-package fmi.sports.tournament.organizer.backend.entities.team;
+package fmi.sports.tournament.organizer.backend.dtos;
 
-import fmi.sports.tournament.organizer.backend.entities.user.User;
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import fmi.sports.tournament.organizer.backend.entities.team.Team;
 
-import java.util.Set;
+public class TeamDTO {
+    public static TeamDTO fromEntity(Team team) {
+        return new TeamDTO(team.getId(),
+                team.getName(),
+                team.getEmail(),
+                team.getBudget(),
+                team.getSize(),
+                team.getSecretCode());
+    }
 
-@Entity
-@Table(name = "teams")
-public class Team {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @JsonProperty(value = "teamName")
     private String name;
+
+    @JsonProperty(value = "contactEmail")
     private String email;
     private Double budget;
+
+    @JsonProperty(value = "maxMembers")
     private Integer size;
     private String secretCode;
-    //TODO: add other columns in DB model
 
-    @OneToMany(mappedBy = "team")
-    private Set<Participant> participants;
-
-    @ManyToMany(mappedBy = "followedTeams")
-    private Set<User> followers;
-
-    public Team() {
+    public TeamDTO() {
 
     }
 
-    public Team(String name,
-                String email,
-                Double budget,
-                Integer size,
-                String secretCode) {
+    public TeamDTO(Long id,
+                   String name,
+                   String email,
+                   Double budget,
+                   Integer size,
+                   String secretCode) {
+        this.id = id;
         this.name = name;
         this.email = email;
         this.budget = budget;
@@ -64,12 +68,8 @@ public class Team {
         return secretCode;
     }
 
-    public Set<Participant> getParticipants() {
-        return participants;
-    }
-
-    public Set<User> getFollowers() {
-        return followers;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setName(String name) {
@@ -90,13 +90,5 @@ public class Team {
 
     public void setSecretCode(String secretCode) {
         this.secretCode = secretCode;
-    }
-
-    public void setParticipants(Set<Participant> participants) {
-        this.participants = participants;
-    }
-
-    public void setFollowers(Set<User> followers) {
-        this.followers = followers;
     }
 }
