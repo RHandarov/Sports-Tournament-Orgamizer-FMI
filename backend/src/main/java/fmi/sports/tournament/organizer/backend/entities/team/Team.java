@@ -1,5 +1,6 @@
 package fmi.sports.tournament.organizer.backend.entities.team;
 
+import fmi.sports.tournament.organizer.backend.entities.tournament.Tournament;
 import fmi.sports.tournament.organizer.backend.entities.user.User;
 import jakarta.persistence.*;
 
@@ -23,6 +24,9 @@ public class Team {
 
     @ManyToMany(mappedBy = "followedTeams")
     private Set<User> followers;
+
+    @ManyToMany(mappedBy = "teams")
+    private Set<Tournament> tournaments;
 
     public Team() {
 
@@ -72,6 +76,10 @@ public class Team {
         return followers;
     }
 
+    public Set<Tournament> getTournaments() {
+        return tournaments;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -98,5 +106,9 @@ public class Team {
 
     public void setFollowers(Set<User> followers) {
         this.followers = followers;
+    }
+
+    public void setTournaments(Set<Tournament> tournaments) {
+        this.tournaments = tournaments;
     }
 }

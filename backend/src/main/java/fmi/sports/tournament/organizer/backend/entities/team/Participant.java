@@ -43,4 +43,12 @@ public class Participant {
     public void setCategory(ParticipantCategory category) {
         this.category = category;
     }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
+    }
 }

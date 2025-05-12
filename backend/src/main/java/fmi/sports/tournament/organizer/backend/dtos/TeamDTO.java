@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import fmi.sports.tournament.organizer.backend.entities.team.Team;
 
 public class TeamDTO {
+    private static final Long ID_NOT_SET = -1L;
+
     public static TeamDTO fromEntity(Team team) {
         return new TeamDTO(team.getId(),
                 team.getName(),
@@ -27,7 +29,7 @@ public class TeamDTO {
     private String secretCode;
 
     public TeamDTO() {
-
+        this.id = ID_NOT_SET;
     }
 
     public TeamDTO(Long id,

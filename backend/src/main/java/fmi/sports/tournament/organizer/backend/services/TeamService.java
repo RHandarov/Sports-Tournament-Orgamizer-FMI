@@ -11,6 +11,6 @@ public interface TeamService {
     List<TeamDTO> getAll();
     Optional<TeamDTO> getById(Long teamId);
     TeamDTO create(TeamDTO newTeam);
-    boolean update(TeamDTO updatedTeam);
-    boolean deleteById(Long teamId);
+    void update(TeamDTO updatedTeam);
+    void deleteById(Long teamId);
 }

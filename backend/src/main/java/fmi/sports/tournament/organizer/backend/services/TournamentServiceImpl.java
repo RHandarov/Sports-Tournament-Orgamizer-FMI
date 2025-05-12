@@ -1,11 +1,19 @@
 package fmi.sports.tournament.organizer.backend.services;
 
+import fmi.sports.tournament.organizer.backend.dtos.TeamDTO;
 import fmi.sports.tournament.organizer.backend.dtos.TournamentDTO;
+import fmi.sports.tournament.organizer.backend.entities.team.Team;
 import fmi.sports.tournament.organizer.backend.entities.tournament.Tournament;
+import fmi.sports.tournament.organizer.backend.exceptions.InappropriateMomentException;
+import fmi.sports.tournament.organizer.backend.exceptions.NoPlacesAvailableException;
+import fmi.sports.tournament.organizer.backend.exceptions.NoSufficientMoneyException;
+import fmi.sports.tournament.organizer.backend.repositories.TeamsRepository;
 import fmi.sports.tournament.organizer.backend.repositories.TournamentsRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -13,10 +21,13 @@ import java.util.stream.Collectors;
 @Service
 public class TournamentServiceImpl implements TournamentService {
     private final TournamentsRepository tournamentsRepository;
+    private final TeamsRepository teamsRepository;
 
     @Autowired
-    public TournamentServiceImpl(TournamentsRepository tournamentsRepository) {
+    public TournamentServiceImpl(TournamentsRepository tournamentsRepository,
+                                 TeamsRepository teamsRepository) {
         this.tournamentsRepository = tournamentsRepository;
+        this.teamsRepository = teamsRepository;
     }
 
     @Override
@@ -51,14 +62,8 @@ public class TournamentServiceImpl implements TournamentService {
     }
 
     @Override
-    public boolean update(TournamentDTO updatedTournament) {
-        Optional<Tournament> tournamentOptional =
-                tournamentsRepository.findById(updatedTournament.getId());
-        if (tournamentOptional.isEmpty()) {
-            return false;
-        }
-
-        Tournament tournament = tournamentOptional.get();
+    public void update(TournamentDTO updatedTournament) {
+        Tournament tournament = getTournamentEntityById(updatedTournament.getId());
         tournament.setLocation(updatedTournament.getLocation());
         tournament.setName(updatedTournament.getName());
         tournament.setEndDate(updatedTournament.getEndDate());
@@ -68,12 +73,94 @@ public class TournamentServiceImpl implements TournamentService {
         tournament.setStartDate(updatedTournament.getStartDate());
 
         tournamentsRepository.save(tournament);
-        return true;
     }
 
     @Override
-    public boolean deleteById(Long tournamentId) {
+    public void deleteById(Long tournamentId) {
         tournamentsRepository.deleteById(tournamentId);
-        return true;
+    }
+
+    @Override
+    public List<TeamDTO> getAllParticipatingTeams(Long tournamentId) {
+        return getTournamentEntityById(tournamentId)
+                .getTeams()
+                .stream()
+                .map(TeamDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void registerTeamForParticipation(Long tournamentId, Long teamId) {
+        Tournament tournament = getTournamentEntityById(tournamentId);
+        if (LocalDate.now().isAfter(tournament.getStartDate())
+            || LocalDate.now().equals(tournament.getStartDate())) {
+            throw new InappropriateMomentException("Team cannot register after start of tournament!");
+        }
+
+        Team team = getTeamEntityById(teamId);
+
+        if (tournament.getTeams().contains(team)) {
+            return;
+        }
+
+        if (team.getBudget() < tournament.getRegistrationFee()) {
+            throw new NoSufficientMoneyException("Not enough money for registration for this tournament!");
+        }
+
+        if (tournament.getTeams().size() == tournament.getMaxTeams()) {
+            throw new NoPlacesAvailableException("There are not more places for registration in this tournament!");
+        }
+
+        tournament.getTeams().add(team);
+        team.setBudget(team.getBudget() - tournament.getRegistrationFee());
+        tournamentsRepository.save(tournament);
+        teamsRepository.save(team);
+    }
+
+    @Override
+    public void unregisterTeamForParticipation(Long tournamentId, Long teamId) {
+        Tournament tournament = getTournamentEntityById(tournamentId);
+        if (LocalDate.now().isAfter(tournament.getStartDate())
+                || LocalDate.now().equals(tournament.getStartDate())) {
+            throw new InappropriateMomentException("Team cannot unregister after start of tournament!");
+        }
+
+        Team team = getTeamEntityById(teamId);
+
+        if (!tournament.getTeams().contains(team)) {
+            return;
+        }
+
+        tournament.getTeams().remove(team);
+        team.setBudget(team.getBudget() + tournament.getRegistrationFee());
+        tournamentsRepository.save(tournament);
+        teamsRepository.save(team);
+    }
+
+    private Tournament getTournamentEntityById(Long tournamentId) {
+        Optional<Tournament> tournamentOptional =
+                tournamentsRepository.findById(tournamentId);
+
+        if (tournamentOptional.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Tournament with id " + tournamentId + " doesn't exists!"
+            );
+        }
+
+        return tournamentOptional.get();
+    }
+
+    private Team getTeamEntityById(Long teamId) {
+        Optional<Team> teamOptional =
+                teamsRepository.findById(teamId);
+
+        if (teamOptional.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Team with id " + teamId + " doesn't exists!"
+            );
+        }
+
+        return teamOptional.get();
     }
 }

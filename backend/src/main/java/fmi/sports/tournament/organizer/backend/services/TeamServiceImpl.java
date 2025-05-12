@@ -23,21 +23,11 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public List<TeamDTO> getAll() {
-        return teamsRepository.findAll()
-                .stream()
-                .map(TeamDTO::fromEntity)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public Optional<TeamDTO> getById(Long teamId) {
-        return teamsRepository.findById(teamId)
-                .map(TeamDTO::fromEntity);
-    }
-
-    @Override
     public TeamDTO create(TeamDTO newTeam) {
+        if (getById(newTeam.getId()).isPresent()) {
+            return newTeam;
+        }
+
         Team newEntity = new Team(newTeam.getName(),
                 newTeam.getEmail(),
                 newTeam.getBudget(),
@@ -47,16 +37,22 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public boolean update(TeamDTO updatedTeam) {
-        Optional<Team> teamOptional =
-                teamsRepository.findById(updatedTeam.getId());
+    public Optional<TeamDTO> getById(Long teamId) {
+        return teamsRepository.findById(teamId)
+                .map(TeamDTO::fromEntity);
+    }
 
-        if (teamOptional.isEmpty()) {
-            return false;
-        }
+    @Override
+    public List<TeamDTO> getAll() {
+        return teamsRepository.findAll()
+                .stream()
+                .map(TeamDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
 
-        Team team = teamOptional.get();
-
+    @Override
+    public void update(TeamDTO updatedTeam) {
+        Team team = getTeamEntityById(updatedTeam.getId());
         team.setName(updatedTeam.getName());
         team.setEmail(updatedTeam.getEmail());
         team.setBudget(updatedTeam.getBudget());
@@ -65,14 +61,22 @@ public class TeamServiceImpl implements TeamService {
             team.setSecretCode(updatedTeam.getSecretCode());
         }
 
-
         teamsRepository.save(team);
-        return true;
+    }
+
+    private Team getTeamEntityById(Long teamId) {
+        Optional<Team> teamOptional =
+                teamsRepository.findById(teamId);
+
+        if (teamOptional.isEmpty()) {
+            throw new IllegalArgumentException("Team with id " + teamId + " doesn't exists!");
+        }
+
+        return teamOptional.get();
     }
 
     @Override
-    public boolean deleteById(Long teamId) {
+    public void deleteById(Long teamId) {
         teamsRepository.deleteById(teamId);
-        return true;
     }
 }

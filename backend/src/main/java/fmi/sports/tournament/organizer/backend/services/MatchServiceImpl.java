@@ -6,6 +6,8 @@ import fmi.sports.tournament.organizer.backend.entities.team.Team;
 import fmi.sports.tournament.organizer.backend.entities.tournament.Tournament;
 import fmi.sports.tournament.organizer.backend.entities.tournament.match.Match;
 import fmi.sports.tournament.organizer.backend.entities.tournament.match.MatchStatus;
+import fmi.sports.tournament.organizer.backend.exceptions.CompletedMatchException;
+import fmi.sports.tournament.organizer.backend.exceptions.TeamNotParticipatingException;
 import fmi.sports.tournament.organizer.backend.repositories.MatchesRepository;
 import fmi.sports.tournament.organizer.backend.repositories.TeamsRepository;
 import fmi.sports.tournament.organizer.backend.repositories.TournamentsRepository;
@@ -35,7 +37,15 @@ public class MatchServiceImpl implements MatchService {
     public MatchDTO schedule(MatchDTO newMatch) {
         Tournament tournament = getTournamentEntityById(newMatch.getTournamentId());
         Team team1 = getTeamEntityById(newMatch.getTeam1Id());
+        if (!tournament.getTeams().contains(team1)) {
+            throw new TeamNotParticipatingException(newMatch.getTeam1Id());
+        }
+
         Team team2 = getTeamEntityById(newMatch.getTeam2Id());
+        if (!tournament.getTeams().contains(team2)) {
+            throw new TeamNotParticipatingException(newMatch.getTeam2Id());
+        }
+
         Match match = new Match(tournament, team1, team2, newMatch.getVenue());
         return MatchDTO.fromEntity(matchesRepository.save(match));
     }
@@ -78,42 +88,27 @@ public class MatchServiceImpl implements MatchService {
     }
 
     @Override
-    public boolean deleteById(Long matchId) {
+    public void deleteById(Long matchId) {
         matchesRepository.deleteById(matchId);
-        return true;
     }
 
     @Override
-    public boolean updateResults(Long matchId, MatchResultsDTO newResults) {
-        Match match;
-        try {
-            match = getMatchEntityById(matchId);
-        } catch (IllegalArgumentException _) {
-            return false;
-        }
-
+    public void updateResults(Long matchId, MatchResultsDTO newResults) {
+        Match match = getMatchEntityById(matchId);
         if (match.getStatus() == MatchStatus.COMPLETED) {
-            return false;
+            throw new CompletedMatchException(matchId);
         }
 
         match.setTeam1Points(newResults.getTeam1Points());
         match.setTeam2Points(newResults.getTeam2Points());
         matchesRepository.save(match);
-        return true;
     }
 
     @Override
-    public boolean markAsFinished(Long matchId) {
-        Match match;
-        try {
-            match = getMatchEntityById(matchId);
-        } catch (IllegalArgumentException _) {
-            return false;
-        }
-
+    public void markAsFinished(Long matchId) {
+        Match match = getMatchEntityById(matchId);
         match.setStatus(MatchStatus.COMPLETED);
         matchesRepository.save(match);
-        return true;
     }
 
     private Match getMatchEntityById(Long matchId) {

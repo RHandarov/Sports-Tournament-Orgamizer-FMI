@@ -17,6 +17,10 @@ public class Standing {
     private Team team;
     private Integer points;
 
+    public Standing() {
+
+    }
+
     public Standing(Tournament tournament, Team team) {
         this.tournament = tournament;
         this.team = team;
@@ -37,5 +41,13 @@ public class Standing {
 
     public void setPoints(Integer points) {
         this.points = points;
+    }
+
+    public void setTournament(Tournament tournament) {
+        this.tournament = tournament;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
     }
 }

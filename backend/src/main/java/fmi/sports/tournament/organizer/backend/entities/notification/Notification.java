@@ -25,6 +25,10 @@ public class Notification {
     private LocalDateTime creationTime;
     private boolean isRead;
 
+    public Notification() {
+
+    }
+
     public Notification(User user, NotificationMessage message) {
         this.user = user;
         this.message = message;
@@ -50,5 +54,17 @@ public class Notification {
 
     public void setRead(boolean read) {
         isRead = read;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setMessage(NotificationMessage message) {
+        this.message = message;
+    }
+
+    public void setCreationTime(LocalDateTime creationTime) {
+        this.creationTime = creationTime;
     }
 }

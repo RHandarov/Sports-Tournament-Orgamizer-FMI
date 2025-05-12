@@ -44,20 +44,19 @@ public class TeamController {
     }
 
     @PutMapping
-    public ResponseEntity update(@RequestBody TeamDTO updatedTeams) {
-        if (teamService.update(updatedTeams)) {
-            return ResponseEntity.ok().build();
+    public ResponseEntity<String> update(@RequestBody TeamDTO updatedTeams) {
+        try {
+            teamService.update(updatedTeams);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
 
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity deleteById(@PathVariable("id") Long teamId) {
-        if (teamService.deleteById(teamId)) {
-            return ResponseEntity.ok().build();
-        }
-
-        return ResponseEntity.badRequest().build();
+        teamService.deleteById(teamId);
+        return ResponseEntity.ok().build();
     }
 }

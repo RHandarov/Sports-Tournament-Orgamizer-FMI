@@ -23,6 +23,10 @@ public class Token {
     @Enumerated(EnumType.STRING)
     private TokenType type;
 
+    public Token() {
+
+    }
+
     public Token(User user, LocalDateTime expires, TokenType type) {
         this.user = user;
         this.token = TokenGenerator.generateRandomToken(TOKEN_LENGTH);
@@ -44,5 +48,21 @@ public class Token {
 
     public TokenType getType() {
         return type;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public void setExpires(LocalDateTime expires) {
+        this.expires = expires;
+    }
+
+    public void setType(TokenType type) {
+        this.type = type;
     }
 }

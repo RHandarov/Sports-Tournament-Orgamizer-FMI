@@ -19,6 +19,10 @@ public class Session {
     private String sessionId;
     private LocalDateTime expires;
 
+    public Session() {
+
+    }
+
     public Session(User user, LocalDateTime expires) {
         this.user = user;
         this.sessionId = TokenGenerator.generateRandomToken(TOKEN_LENGTH);
@@ -35,5 +39,17 @@ public class Session {
 
     public LocalDateTime getExpires() {
         return expires;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public void setExpires(LocalDateTime expires) {
+        this.expires = expires;
     }
 }

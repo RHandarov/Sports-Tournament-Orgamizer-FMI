@@ -13,7 +13,7 @@ public interface MatchService {
     MatchDTO schedule(MatchDTO newMatch);
     List<MatchDTO> getAllForTournament(Long tournamentId);
     Optional<MatchDTO> getById(Long matchId);
-    boolean deleteById(Long matchId);
-    boolean updateResults(Long matchId, MatchResultsDTO newResults);
-    boolean markAsFinished(Long matchId);
+    void deleteById(Long matchId);
+    void updateResults(Long matchId, MatchResultsDTO newResults);
+    void markAsFinished(Long matchId);
 }

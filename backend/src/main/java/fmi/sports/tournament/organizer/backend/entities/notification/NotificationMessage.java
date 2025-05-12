@@ -12,6 +12,10 @@ public class NotificationMessage {
     @Column(columnDefinition = "text")
     private String messageContent;
 
+    public NotificationMessage() {
+
+    }
+
     public NotificationMessage(String messageContent) {
         this.messageContent = messageContent;
     }
@@ -22,5 +26,13 @@ public class NotificationMessage {
 
     public String getMessageContent() {
         return messageContent;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setMessageContent(String messageContent) {
+        this.messageContent = messageContent;
     }
 }

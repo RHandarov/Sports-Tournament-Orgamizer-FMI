@@ -22,13 +22,13 @@ public class MatchController {
     }
 
     @PostMapping
-    public ResponseEntity schedule(@PathVariable("tId") Long tournamentId,
+    public ResponseEntity<String> schedule(@PathVariable("tId") Long tournamentId,
                                    @RequestBody MatchDTO newMatch) {
         newMatch.setTournamentId(tournamentId);
         try {
             matchService.schedule(newMatch);
-        } catch (IllegalArgumentException _) {
-            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -50,30 +50,31 @@ public class MatchController {
     }
 
     @PatchMapping("/{mId}/results")
-    public ResponseEntity updateMatchScore(@PathVariable("mId") Long matchId,
+    public ResponseEntity<String> updateMatchScore(@PathVariable("mId") Long matchId,
                                            @RequestBody MatchResultsDTO newScore) {
-        if (matchService.updateResults(matchId, newScore)) {
-            return ResponseEntity.ok().build();
+        try {
+            matchService.updateResults(matchId, newScore);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
 
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{mId}")
     public ResponseEntity delete(@PathVariable("mId") Long matchId) {
-        if (matchService.deleteById(matchId)) {
-            return ResponseEntity.ok().build();
-        }
-
-        return ResponseEntity.badRequest().build();
+        matchService.deleteById(matchId);
+        return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/{mId}/finished")
-    public ResponseEntity markAsFinished(@PathVariable("mId") Long matchId) {
-        if (matchService.markAsFinished(matchId)) {
-            return ResponseEntity.ok().build();
+    public ResponseEntity<String> markAsFinished(@PathVariable("mId") Long matchId) {
+        try {
+            matchService.markAsFinished(matchId);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
 
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok().build();
     }
 }

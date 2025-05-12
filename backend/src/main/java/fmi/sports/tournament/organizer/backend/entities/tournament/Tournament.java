@@ -1,8 +1,10 @@
 package fmi.sports.tournament.organizer.backend.entities.tournament;
 
+import fmi.sports.tournament.organizer.backend.entities.team.Team;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 @Table(name = "tournaments")
@@ -17,6 +19,12 @@ public class Tournament {
     private LocalDate endDate;
     private Double registrationFee;
     private Integer maxTeams;
+
+    @ManyToMany
+    @JoinTable(name = "tournament_team",
+               joinColumns = @JoinColumn(name = "tournament_id"),
+               inverseJoinColumns = @JoinColumn(name = "team_id"))
+    private Set<Team> teams;
 
     public Tournament() {
 
@@ -70,6 +78,10 @@ public class Tournament {
         return maxTeams;
     }
 
+    public Set<Team> getTeams() {
+        return teams;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -100,5 +112,9 @@ public class Tournament {
 
     public void setSportType(String sportType) {
         this.sportType = sportType;
+    }
+
+    public void setTeams(Set<Team> teams) {
+        this.teams = teams;
     }
 }
