@@ -3,6 +3,7 @@ package fmi.sports.tournament.organizer.backend.controllers;
 import fmi.sports.tournament.organizer.backend.dtos.TeamDTO;
 import fmi.sports.tournament.organizer.backend.dtos.TournamentDTO;
 import fmi.sports.tournament.organizer.backend.response.ResponseResult;
+import fmi.sports.tournament.organizer.backend.response.TeamResponse;
 import fmi.sports.tournament.organizer.backend.response.TournamentResponse;
 import fmi.sports.tournament.organizer.backend.services.TournamentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,39 +77,37 @@ public class TournamentController {
 
     @GetMapping("/{id}/teams")
     public ResponseEntity<List<TeamDTO>> getAllParticipatingTeams(@PathVariable("id") Long tournamentId) {
-        List<TeamDTO> teams;
-        try {
-            teams = tournamentService.getAllParticipatingTeams(tournamentId);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-
+        List<TeamDTO> teams = tournamentService.getAllParticipatingTeams(tournamentId);
         return ResponseEntity.ok(teams);
     }
 
     @PostMapping("/{tournamentId}/teams/{teamId}")
-    public ResponseEntity<String> registerTeamForParticipation(
+    public ResponseEntity<TeamResponse> registerTeamForParticipation(
             @PathVariable("tournamentId") Long tournamentId,
             @PathVariable("teamId") Long teamId) {
-        try {
-            tournamentService.registerTeamForParticipation(tournamentId, teamId);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
 
-        return ResponseEntity.ok().build();
+        tournamentService.registerTeamForParticipation(tournamentId, teamId);
+
+        return ResponseEntity.ok(
+                TeamResponse.builder()
+                        .responseResult(ResponseResult.SUCCESSFULLY_REGISTERED)
+                        .message(String.format("Team with id %d successfully registered for tournament with id %d.", teamId, tournamentId))
+                        .build()
+        );
     }
 
     @DeleteMapping("/{tournamentId}/teams/{teamId}")
-    public ResponseEntity<String> unregisterTeamForParticipation(
+    public ResponseEntity<TeamResponse> unregisterTeamForParticipation(
             @PathVariable("tournamentId") Long tournamentId,
             @PathVariable("teamId") Long teamId) {
-        try {
-            tournamentService.unregisterTeamForParticipation(tournamentId, teamId);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
 
-        return ResponseEntity.ok().build();
+        tournamentService.unregisterTeamForParticipation(tournamentId, teamId);
+
+        return ResponseEntity.ok(
+                TeamResponse.builder()
+                        .responseResult(ResponseResult.SUCCESSFULLY_UNREGISTERED)
+                        .message(String.format("Team with id %d successfully unregistered for tournament with id %d.", teamId, tournamentId))
+                        .build()
+        );
     }
 }

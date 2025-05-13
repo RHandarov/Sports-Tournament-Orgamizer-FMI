@@ -4,10 +4,7 @@ import fmi.sports.tournament.organizer.backend.dtos.TeamDTO;
 import fmi.sports.tournament.organizer.backend.dtos.TournamentDTO;
 import fmi.sports.tournament.organizer.backend.entities.team.Team;
 import fmi.sports.tournament.organizer.backend.entities.tournament.Tournament;
-import fmi.sports.tournament.organizer.backend.exceptions.InappropriateMomentException;
-import fmi.sports.tournament.organizer.backend.exceptions.NoPlacesAvailableException;
-import fmi.sports.tournament.organizer.backend.exceptions.NoSufficientMoneyException;
-import fmi.sports.tournament.organizer.backend.exceptions.NoTournamentWithSuchIdException;
+import fmi.sports.tournament.organizer.backend.exceptions.*;
 import fmi.sports.tournament.organizer.backend.repositories.TeamsRepository;
 import fmi.sports.tournament.organizer.backend.repositories.TournamentsRepository;
 import jakarta.transaction.Transactional;
@@ -63,7 +60,7 @@ public class TournamentServiceImpl implements TournamentService {
 
     @Override
     public void updateById(TournamentDTO updatedTournament, long id) {
-          tournamentsRepository
+        tournamentsRepository
                 .findById(id)
                 .orElseThrow(() -> new NoTournamentWithSuchIdException(String.format("Tournament with id %d does not exist", id)));
 
@@ -74,9 +71,7 @@ public class TournamentServiceImpl implements TournamentService {
 
     @Override
     public TournamentDTO deleteById(Long tournamentId) {
-        Tournament tournament = tournamentsRepository.findById(tournamentId).orElseThrow(
-                () -> new NoTournamentWithSuchIdException(String.format("Tournament with id %d does not exist", tournamentId))
-        );
+        Tournament tournament = getTournamentEntityById(tournamentId);
         TournamentDTO tournamentDTO = TournamentDTO.fromEntity(tournament);
         tournamentsRepository.deleteById(tournamentId);
         return tournamentDTO;
@@ -95,6 +90,7 @@ public class TournamentServiceImpl implements TournamentService {
     @Transactional
     public void registerTeamForParticipation(Long tournamentId, Long teamId) {
         Tournament tournament = getTournamentEntityById(tournamentId);
+
         if (LocalDate.now().isAfter(tournament.getStartDate())
                 || LocalDate.now().equals(tournament.getStartDate())) {
             throw new InappropriateMomentException("Team cannot register after start of tournament!");
@@ -103,7 +99,9 @@ public class TournamentServiceImpl implements TournamentService {
         Team team = getTeamEntityById(teamId);
 
         if (tournament.getTeams().contains(team)) {
-            return;
+            throw new TeamAlreadyRegisteredException(
+                    String.format("Team with id %d already registered for Tournament with id %d.", team.getId(), tournament.getId())
+            );
         }
 
         if (team.getBudget() < tournament.getRegistrationFee()) {
@@ -111,7 +109,7 @@ public class TournamentServiceImpl implements TournamentService {
         }
 
         if (tournament.getTeams().size() == tournament.getMaxTeams()) {
-            throw new NoPlacesAvailableException("There are not more places for registration in this tournament!");
+            throw new NoPlacesAvailableException("There are no more places for registration in this tournament!");
         }
 
         tournament.getTeams().add(team);
@@ -141,28 +139,17 @@ public class TournamentServiceImpl implements TournamentService {
     }
 
     private Tournament getTournamentEntityById(Long tournamentId) {
-        Optional<Tournament> tournamentOptional =
-                tournamentsRepository.findById(tournamentId);
+        return tournamentsRepository.findById(tournamentId).orElseThrow(
+                () -> new NoTournamentWithSuchIdException(String.format("Tournament with id %d does not exist", tournamentId))
+        );
 
-        if (tournamentOptional.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Tournament with id " + tournamentId + " doesn't exists!"
-            );
-        }
 
-        return tournamentOptional.get();
     }
 
     private Team getTeamEntityById(Long teamId) {
-        Optional<Team> teamOptional =
-                teamsRepository.findById(teamId);
-
-        if (teamOptional.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Team with id " + teamId + " doesn't exists!"
-            );
-        }
-
-        return teamOptional.get();
+        return teamsRepository.findById(teamId).orElseThrow(
+                () -> new NoTeamWithSuchIdException(String.format("Team with id %d doesn't exist!", teamId))
+        );
     }
+
 }
