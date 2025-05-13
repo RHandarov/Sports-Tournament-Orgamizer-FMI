@@ -7,6 +7,7 @@ import fmi.sports.tournament.organizer.backend.entities.tournament.Tournament;
 import fmi.sports.tournament.organizer.backend.exceptions.InappropriateMomentException;
 import fmi.sports.tournament.organizer.backend.exceptions.NoPlacesAvailableException;
 import fmi.sports.tournament.organizer.backend.exceptions.NoSufficientMoneyException;
+import fmi.sports.tournament.organizer.backend.exceptions.NoTournamentWithSuchIdException;
 import fmi.sports.tournament.organizer.backend.repositories.TeamsRepository;
 import fmi.sports.tournament.organizer.backend.repositories.TournamentsRepository;
 import jakarta.transaction.Transactional;
@@ -32,9 +33,6 @@ public class TournamentServiceImpl implements TournamentService {
 
     @Override
     public TournamentDTO create(TournamentDTO newTournament) {
-        if (getById(newTournament.getId()).isPresent()) {
-            return newTournament;
-        }
 
         Tournament entity = new Tournament(newTournament.getName(),
                 newTournament.getLocation(),
@@ -56,31 +54,32 @@ public class TournamentServiceImpl implements TournamentService {
     }
 
     @Override
-    public Optional<TournamentDTO> getById(Long tournamentId) {
-        return tournamentsRepository.findById(tournamentId)
-                .map(TournamentDTO::fromEntity);
+    public TournamentDTO getById(Long tournamentId) {
+        Tournament tournament = tournamentsRepository.findById(tournamentId).orElseThrow(
+                () -> new NoTournamentWithSuchIdException(String.format("Tournament with id %d does not exist", tournamentId))
+        );
+        return TournamentDTO.fromEntity(tournament);
     }
 
     @Override
     public void updateById(TournamentDTO updatedTournament, long id) {
-//        Tournament tournament = getTournamentEntityById(updatedTournament.getId());
-//        tournament.setLocation(updatedTournament.getLocation());
-//        tournament.setName(updatedTournament.getName());
-//        tournament.setEndDate(updatedTournament.getEndDate());
-//        tournament.setMaxTeams(updatedTournament.getMaxTeams());
-//        tournament.setRegistrationFee(updatedTournament.getRegistrationFee());
-//        tournament.setSportType(updatedTournament.getSportType());
-//        tournament.setStartDate(updatedTournament.getStartDate());
-        Tournament tournament = tournamentsRepository
+          tournamentsRepository
                 .findById(id)
-                .orElseThrow(() -> new IllegalArgumentException(String.format("String with id %d does not exist", id)));
+                .orElseThrow(() -> new NoTournamentWithSuchIdException(String.format("Tournament with id %d does not exist", id)));
 
+        Tournament tournament = Tournament.fromDTO(updatedTournament);
+        tournament.setId(id);
         tournamentsRepository.save(tournament);
     }
 
     @Override
-    public void deleteById(Long tournamentId) {
+    public TournamentDTO deleteById(Long tournamentId) {
+        Tournament tournament = tournamentsRepository.findById(tournamentId).orElseThrow(
+                () -> new NoTournamentWithSuchIdException(String.format("Tournament with id %d does not exist", tournamentId))
+        );
+        TournamentDTO tournamentDTO = TournamentDTO.fromEntity(tournament);
         tournamentsRepository.deleteById(tournamentId);
+        return tournamentDTO;
     }
 
     @Override

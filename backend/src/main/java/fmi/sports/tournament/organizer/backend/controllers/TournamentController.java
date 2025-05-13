@@ -29,43 +29,53 @@ public class TournamentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TournamentDTO> getById(@PathVariable("id") Long tournamentId) {
-        Optional<TournamentDTO> dto =
-                tournamentService.getById(tournamentId);
+    public ResponseEntity<TournamentResponse> getById(@PathVariable("id") Long tournamentId) {
 
-        if (dto.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.of(dto);
+        TournamentDTO tournamentDTO = tournamentService.getById(tournamentId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                TournamentResponse
+                        .fromDTO(tournamentDTO)
+                        .responseResult(ResponseResult.SUCCESSFULLY_FOUND)
+                        .build()
+        );
     }
 
     @PostMapping
     public ResponseEntity<TournamentResponse> create(@RequestBody TournamentDTO newTournament) {
         TournamentDTO tournamentDTO = tournamentService.create(newTournament);
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                TournamentResponse.fromDTO(tournamentDTO).responseResult(ResponseResult.SUCCESSFULLY_CREATED).build()
+                TournamentResponse
+                        .fromDTO(tournamentDTO)
+                        .responseResult(ResponseResult.SUCCESSFULLY_CREATED)
+                        .build()
         );
     }
-    @PutMapping("/{id}")
-    public ResponseEntity<String> update(@RequestBody TournamentDTO updatedTournament, @RequestParam long id) {
-        try {
-            tournamentService.updateById(updatedTournament, id);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
 
-        return ResponseEntity.ok().build();
+    @PutMapping("/{id}")
+    public ResponseEntity<TournamentResponse> update(@RequestBody TournamentDTO updatedTournament, @PathVariable long id) {
+        tournamentService.updateById(updatedTournament, id);
+
+        return ResponseEntity.ok(
+                TournamentResponse
+                        .fromDTO(updatedTournament)
+                        .id(id)
+                        .responseResult(ResponseResult.SUCCESSFULLY_UPDATED)
+                        .build()
+        );
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity delete(@PathVariable("id") Long tournamentId) {
-        tournamentService.deleteById(tournamentId);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<TournamentResponse> delete(@PathVariable("id") Long tournamentId) {
+        TournamentDTO tournamentDTO = tournamentService.deleteById(tournamentId);
+        return ResponseEntity.ok(
+                TournamentResponse.fromDTO(tournamentDTO)
+                        .responseResult(ResponseResult.SUCCESSFULLY_DELETED)
+                        .build()
+        );
     }
 
     @GetMapping("/{id}/teams")
-    public ResponseEntity<List<TeamDTO> > getAllParticipatingTeams(@PathVariable("id") Long tournamentId) {
+    public ResponseEntity<List<TeamDTO>> getAllParticipatingTeams(@PathVariable("id") Long tournamentId) {
         List<TeamDTO> teams;
         try {
             teams = tournamentService.getAllParticipatingTeams(tournamentId);
@@ -76,7 +86,7 @@ public class TournamentController {
         return ResponseEntity.ok(teams);
     }
 
-    @PutMapping("/{tournamentId}/teams/{teamId}")
+    @PostMapping("/{tournamentId}/teams/{teamId}")
     public ResponseEntity<String> registerTeamForParticipation(
             @PathVariable("tournamentId") Long tournamentId,
             @PathVariable("teamId") Long teamId) {

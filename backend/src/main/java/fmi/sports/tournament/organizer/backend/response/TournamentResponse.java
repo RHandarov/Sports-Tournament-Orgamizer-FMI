@@ -24,6 +24,7 @@ public class TournamentResponse {
     private Double registrationFee;
     private Integer maxTeams;
     private ResponseResult responseResult;
+    private String message;
 
     public static TournamentResponseBuilder fromDTO(TournamentDTO dto) {
         return TournamentResponse.builder()

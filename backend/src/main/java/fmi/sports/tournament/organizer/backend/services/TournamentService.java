@@ -2,18 +2,18 @@ package fmi.sports.tournament.organizer.backend.services;
 
 import fmi.sports.tournament.organizer.backend.dtos.TeamDTO;
 import fmi.sports.tournament.organizer.backend.dtos.TournamentDTO;
+import fmi.sports.tournament.organizer.backend.entities.tournament.Tournament;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public interface TournamentService {
     TournamentDTO create(TournamentDTO newTournament);
     List<TournamentDTO> getAll();
-    Optional<TournamentDTO> getById(Long tournamentId);
-    void updateById(TournamentDTO updatedTournament);
-    void deleteById(Long tournamentId);
+    TournamentDTO getById(Long tournamentId);
+    void updateById(TournamentDTO updatedTournament,long id);
+    TournamentDTO deleteById(Long tournamentId);
     List<TeamDTO> getAllParticipatingTeams(Long tournamentId);
     void registerTeamForParticipation(Long tournamentId, Long teamId);
     void unregisterTeamForParticipation(Long tournamentId, Long teamId);
