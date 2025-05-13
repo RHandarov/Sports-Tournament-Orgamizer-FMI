@@ -1,6 +1,8 @@
 package fmi.sports.tournament.organizer.backend.controllers;
 
 import fmi.sports.tournament.organizer.backend.dtos.TeamDTO;
+import fmi.sports.tournament.organizer.backend.response.ResponseResult;
+import fmi.sports.tournament.organizer.backend.response.TeamResponse;
 import fmi.sports.tournament.organizer.backend.services.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,37 +28,47 @@ public class TeamController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TeamDTO> getById(@PathVariable("id") Long teamId) {
-        Optional<TeamDTO> dto =
-                teamService.getById(teamId);
-
-        if (dto.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.of(dto);
+    public ResponseEntity<TeamResponse> getById(@PathVariable("id") Long teamId) {
+        TeamDTO dto = teamService.getById(teamId);
+        TeamResponse response = TeamResponse
+                .fromDTO(dto)
+                .responseResult(ResponseResult.SUCCESSFULLY_FOUND)
+                .build();
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
-    public ResponseEntity create(@RequestBody TeamDTO newTeam) {
-        teamService.create(newTeam);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<TeamResponse> create(@RequestBody TeamDTO newTeam) {
+        TeamDTO teamDTO = teamService.create(newTeam);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(
+                        TeamResponse.fromDTO(teamDTO).responseResult(ResponseResult.SUCCESSFULLY_CREATED)
+                                .build()
+                );
     }
 
     @PutMapping
-    public ResponseEntity<String> update(@RequestBody TeamDTO updatedTeams) {
-        try {
-            teamService.update(updatedTeams);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<TeamResponse> update(@RequestBody TeamDTO updatedTeams) {
 
-        return ResponseEntity.ok().build();
+        TeamDTO updated = teamService.update(updatedTeams);
+
+        return ResponseEntity.ok(
+                TeamResponse
+                        .fromDTO(updated)
+                        .responseResult(ResponseResult.SUCCESSFULLY_UPDATED)
+                        .build()
+        );
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteById(@PathVariable("id") Long teamId) {
-        teamService.deleteById(teamId);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<TeamResponse> deleteById(@PathVariable("id") Long teamId) {
+        TeamDTO teamDTO = teamService.deleteById(teamId);
+        return ResponseEntity.ok(
+                TeamResponse
+                        .fromDTO(teamDTO)
+                        .responseResult(ResponseResult.SUCCESSFULLY_DELETED)
+                        .build()
+        );
     }
 }

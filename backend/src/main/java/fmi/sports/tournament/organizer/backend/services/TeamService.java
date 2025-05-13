@@ -9,8 +9,8 @@ import java.util.Optional;
 @Service
 public interface TeamService {
     List<TeamDTO> getAll();
-    Optional<TeamDTO> getById(Long teamId);
+    TeamDTO getById(Long teamId);
     TeamDTO create(TeamDTO newTeam);
-    void update(TeamDTO updatedTeam);
-    void deleteById(Long teamId);
+    TeamDTO update(TeamDTO updatedTeam);
+    TeamDTO deleteById(Long teamId);
 }

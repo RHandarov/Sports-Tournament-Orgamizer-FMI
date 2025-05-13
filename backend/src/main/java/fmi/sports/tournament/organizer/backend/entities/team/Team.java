@@ -3,11 +3,15 @@ package fmi.sports.tournament.organizer.backend.entities.team;
 import fmi.sports.tournament.organizer.backend.entities.tournament.Tournament;
 import fmi.sports.tournament.organizer.backend.entities.user.User;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 import java.util.Set;
 
 @Entity
 @Table(name = "teams")
+@Builder
+@AllArgsConstructor
 public class Team {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,8 +29,9 @@ public class Team {
     @ManyToMany(mappedBy = "followedTeams")
     private Set<User> followers;
 
-    @ManyToMany(mappedBy = "teams")
+    @ManyToMany(mappedBy = "teams", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Tournament> tournaments;
+
 
     public Team() {
 

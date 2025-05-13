@@ -3,6 +3,8 @@ package fmi.sports.tournament.organizer.backend.services;
 import fmi.sports.tournament.organizer.backend.dtos.TeamDTO;
 import fmi.sports.tournament.organizer.backend.entities.auth.TokenGenerator;
 import fmi.sports.tournament.organizer.backend.entities.team.Team;
+import fmi.sports.tournament.organizer.backend.entities.tournament.Tournament;
+import fmi.sports.tournament.organizer.backend.exceptions.NoTeamWithSuchIdException;
 import fmi.sports.tournament.organizer.backend.repositories.TeamsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,9 +26,6 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public TeamDTO create(TeamDTO newTeam) {
-        if (getById(newTeam.getId()).isPresent()) {
-            return newTeam;
-        }
 
         Team newEntity = new Team(newTeam.getName(),
                 newTeam.getEmail(),
@@ -37,9 +36,12 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public Optional<TeamDTO> getById(Long teamId) {
-        return teamsRepository.findById(teamId)
-                .map(TeamDTO::fromEntity);
+    public TeamDTO getById(Long teamId) {
+        TeamDTO teamDTO = teamsRepository.findById(teamId)
+                .map(TeamDTO::fromEntity).orElseThrow(
+                        () -> new NoTeamWithSuchIdException(String.format("Team with id %d does not exist", teamId))
+                );
+        return teamDTO;
     }
 
     @Override
@@ -51,7 +53,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public void update(TeamDTO updatedTeam) {
+    public TeamDTO update(TeamDTO updatedTeam) {
         Team team = getTeamEntityById(updatedTeam.getId());
         team.setName(updatedTeam.getName());
         team.setEmail(updatedTeam.getEmail());
@@ -60,23 +62,27 @@ public class TeamServiceImpl implements TeamService {
         if (updatedTeam.getSecretCode() != null) {
             team.setSecretCode(updatedTeam.getSecretCode());
         }
-
-        teamsRepository.save(team);
+        Team saved = teamsRepository.save(team);
+        return TeamDTO.fromEntity(saved);
     }
 
     private Team getTeamEntityById(Long teamId) {
-        Optional<Team> teamOptional =
-                teamsRepository.findById(teamId);
-
-        if (teamOptional.isEmpty()) {
-            throw new IllegalArgumentException("Team with id " + teamId + " doesn't exists!");
-        }
-
-        return teamOptional.get();
+        return teamsRepository.findById(teamId).orElseThrow(
+                () -> new NoTeamWithSuchIdException(String.format("Team with id %d does not exist", teamId))
+        );
     }
 
     @Override
-    public void deleteById(Long teamId) {
+    public TeamDTO deleteById(Long teamId) {
+        Team team = getTeamEntityById(teamId);
+
+        for (Tournament tournament : team.getTournaments()) {
+            tournament.getTeams().remove(team);
+        }
+
+        team.getTournaments().clear();
+
         teamsRepository.deleteById(teamId);
+        return TeamDTO.fromEntity(team);
     }
 }
