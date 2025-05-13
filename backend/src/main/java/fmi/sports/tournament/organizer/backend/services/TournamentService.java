@@ -12,7 +12,7 @@ public interface TournamentService {
     TournamentDTO create(TournamentDTO newTournament);
     List<TournamentDTO> getAll();
     Optional<TournamentDTO> getById(Long tournamentId);
-    void update(TournamentDTO updatedTournament);
+    void updateById(TournamentDTO updatedTournament);
     void deleteById(Long tournamentId);
     List<TeamDTO> getAllParticipatingTeams(Long tournamentId);
     void registerTeamForParticipation(Long tournamentId, Long teamId);

@@ -2,6 +2,8 @@ package fmi.sports.tournament.organizer.backend.controllers;
 
 import fmi.sports.tournament.organizer.backend.dtos.TeamDTO;
 import fmi.sports.tournament.organizer.backend.dtos.TournamentDTO;
+import fmi.sports.tournament.organizer.backend.response.ResponseResult;
+import fmi.sports.tournament.organizer.backend.response.TournamentResponse;
 import fmi.sports.tournament.organizer.backend.services.TournamentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,15 +41,16 @@ public class TournamentController {
     }
 
     @PostMapping
-    public ResponseEntity create(@RequestBody TournamentDTO newTournament) {
-        tournamentService.create(newTournament);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<TournamentResponse> create(@RequestBody TournamentDTO newTournament) {
+        TournamentDTO tournamentDTO = tournamentService.create(newTournament);
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                TournamentResponse.fromDTO(tournamentDTO).responseResult(ResponseResult.SUCCESSFULLY_CREATED).build()
+        );
     }
-
-    @PutMapping
-    public ResponseEntity<String> update(@RequestBody TournamentDTO updatedTournament) {
+    @PutMapping("/{id}")
+    public ResponseEntity<String> update(@RequestBody TournamentDTO updatedTournament, @RequestParam long id) {
         try {
-            tournamentService.update(updatedTournament);
+            tournamentService.updateById(updatedTournament, id);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

@@ -62,15 +62,18 @@ public class TournamentServiceImpl implements TournamentService {
     }
 
     @Override
-    public void update(TournamentDTO updatedTournament) {
-        Tournament tournament = getTournamentEntityById(updatedTournament.getId());
-        tournament.setLocation(updatedTournament.getLocation());
-        tournament.setName(updatedTournament.getName());
-        tournament.setEndDate(updatedTournament.getEndDate());
-        tournament.setMaxTeams(updatedTournament.getMaxTeams());
-        tournament.setRegistrationFee(updatedTournament.getRegistrationFee());
-        tournament.setSportType(updatedTournament.getSportType());
-        tournament.setStartDate(updatedTournament.getStartDate());
+    public void updateById(TournamentDTO updatedTournament, long id) {
+//        Tournament tournament = getTournamentEntityById(updatedTournament.getId());
+//        tournament.setLocation(updatedTournament.getLocation());
+//        tournament.setName(updatedTournament.getName());
+//        tournament.setEndDate(updatedTournament.getEndDate());
+//        tournament.setMaxTeams(updatedTournament.getMaxTeams());
+//        tournament.setRegistrationFee(updatedTournament.getRegistrationFee());
+//        tournament.setSportType(updatedTournament.getSportType());
+//        tournament.setStartDate(updatedTournament.getStartDate());
+        Tournament tournament = tournamentsRepository
+                .findById(id)
+                .orElseThrow(() -> new IllegalArgumentException(String.format("String with id %d does not exist", id)));
 
         tournamentsRepository.save(tournament);
     }
@@ -94,7 +97,7 @@ public class TournamentServiceImpl implements TournamentService {
     public void registerTeamForParticipation(Long tournamentId, Long teamId) {
         Tournament tournament = getTournamentEntityById(tournamentId);
         if (LocalDate.now().isAfter(tournament.getStartDate())
-            || LocalDate.now().equals(tournament.getStartDate())) {
+                || LocalDate.now().equals(tournament.getStartDate())) {
             throw new InappropriateMomentException("Team cannot register after start of tournament!");
         }
 
