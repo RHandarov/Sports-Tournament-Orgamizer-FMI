@@ -12,8 +12,8 @@ import java.util.Optional;
 public interface MatchService {
     MatchDTO schedule(MatchDTO newMatch);
     List<MatchDTO> getAllForTournament(Long tournamentId);
-    Optional<MatchDTO> getById(Long matchId);
-    void deleteById(Long matchId);
-    void updateResults(Long matchId, MatchResultsDTO newResults);
-    void markAsFinished(Long matchId);
+    MatchDTO getById(Long matchId);
+    MatchDTO deleteById(Long matchId);
+    MatchDTO updateResults(Long matchId, MatchResultsDTO newResults);
+    MatchDTO markAsFinished(Long matchId);
 }

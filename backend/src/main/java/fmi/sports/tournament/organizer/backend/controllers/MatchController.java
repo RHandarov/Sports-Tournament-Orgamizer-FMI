@@ -2,6 +2,9 @@ package fmi.sports.tournament.organizer.backend.controllers;
 
 import fmi.sports.tournament.organizer.backend.dtos.MatchDTO;
 import fmi.sports.tournament.organizer.backend.dtos.MatchResultsDTO;
+import fmi.sports.tournament.organizer.backend.entities.tournament.match.Match;
+import fmi.sports.tournament.organizer.backend.response.MatchResponse;
+import fmi.sports.tournament.organizer.backend.response.ResponseResult;
 import fmi.sports.tournament.organizer.backend.services.MatchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,16 +25,16 @@ public class MatchController {
     }
 
     @PostMapping
-    public ResponseEntity<String> schedule(@PathVariable("tId") Long tournamentId,
-                                   @RequestBody MatchDTO newMatch) {
+    public ResponseEntity<MatchResponse> schedule(@PathVariable("tId") Long tournamentId,
+                                                  @RequestBody MatchDTO newMatch) {
         newMatch.setTournamentId(tournamentId);
-        try {
-            matchService.schedule(newMatch);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        MatchDTO scheduledMatch = matchService.schedule(newMatch);
+        return ResponseEntity.
+                status(HttpStatus.CREATED)
+                .body(MatchResponse
+                        .fromDTO(scheduledMatch)
+                        .responseResult(ResponseResult.SUCCESSFULLY_SCHEDULED)
+                        .build());
     }
 
     @GetMapping
@@ -40,41 +43,47 @@ public class MatchController {
     }
 
     @GetMapping("/{mId}")
-    public ResponseEntity<MatchDTO> getById(@PathVariable("mId") Long matchId) {
-        Optional<MatchDTO> dto = matchService.getById(matchId);
-        if (dto.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.of(dto);
+    public ResponseEntity<MatchResponse> getById(@PathVariable("mId") Long matchId) {
+        MatchDTO matchDTO = matchService.getById(matchId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(
+                        MatchResponse.fromDTO(matchDTO)
+                                .responseResult(ResponseResult.SUCCESSFULLY_FOUND)
+                                .build()
+                );
     }
 
     @PatchMapping("/{mId}/results")
-    public ResponseEntity<String> updateMatchScore(@PathVariable("mId") Long matchId,
+    public ResponseEntity<MatchResponse> updateMatchScore(@PathVariable("mId") Long matchId,
                                            @RequestBody MatchResultsDTO newScore) {
-        try {
-            matchService.updateResults(matchId, newScore);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-
-        return ResponseEntity.ok().build();
+        MatchDTO updatedMatch = matchService.updateResults(matchId, newScore);
+        return ResponseEntity.ok()
+                .body(
+                        MatchResponse.fromDTO(updatedMatch)
+                                .responseResult(ResponseResult.SUCCESSFULLY_UPDATED)
+                                .build()
+                );
     }
 
     @DeleteMapping("/{mId}")
-    public ResponseEntity delete(@PathVariable("mId") Long matchId) {
-        matchService.deleteById(matchId);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<MatchResponse> delete(@PathVariable("mId") Long matchId) {
+        MatchDTO oldMatch = matchService.deleteById(matchId);
+        return ResponseEntity.ok()
+                .body(
+                        MatchResponse.fromDTO(oldMatch)
+                                .responseResult(ResponseResult.SUCCESSFULLY_DELETED)
+                                .build()
+                );
     }
 
     @PatchMapping("/{mId}/finished")
-    public ResponseEntity<String> markAsFinished(@PathVariable("mId") Long matchId) {
-        try {
-            matchService.markAsFinished(matchId);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-
-        return ResponseEntity.ok().build();
+    public ResponseEntity<MatchResponse> markAsFinished(@PathVariable("mId") Long matchId) {
+        MatchDTO updatedMatch = matchService.markAsFinished(matchId);
+        return ResponseEntity.ok()
+                .body(
+                        MatchResponse.fromDTO(updatedMatch)
+                                .responseResult(ResponseResult.SUCCESSFULLY_UPDATED)
+                                .build()
+                );
     }
 }

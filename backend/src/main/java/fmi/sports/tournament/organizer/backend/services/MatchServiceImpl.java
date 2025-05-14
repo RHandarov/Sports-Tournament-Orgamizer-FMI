@@ -6,8 +6,7 @@ import fmi.sports.tournament.organizer.backend.entities.team.Team;
 import fmi.sports.tournament.organizer.backend.entities.tournament.Tournament;
 import fmi.sports.tournament.organizer.backend.entities.tournament.match.Match;
 import fmi.sports.tournament.organizer.backend.entities.tournament.match.MatchStatus;
-import fmi.sports.tournament.organizer.backend.exceptions.CompletedMatchException;
-import fmi.sports.tournament.organizer.backend.exceptions.TeamNotParticipatingException;
+import fmi.sports.tournament.organizer.backend.exceptions.*;
 import fmi.sports.tournament.organizer.backend.repositories.MatchesRepository;
 import fmi.sports.tournament.organizer.backend.repositories.TeamsRepository;
 import fmi.sports.tournament.organizer.backend.repositories.TournamentsRepository;
@@ -55,7 +54,7 @@ public class MatchServiceImpl implements MatchService {
                 teamsRepository.findById(teamId);
 
         if (teamOptional.isEmpty()) {
-            throw new IllegalArgumentException("Team with id " + teamId + " doesn't exists!");
+            throw new NoTeamWithSuchIdException("Team with id " + teamId + " doesn't exists!");
         }
 
         return teamOptional.get();
@@ -75,25 +74,29 @@ public class MatchServiceImpl implements MatchService {
                 tournamentsRepository.findById(tournamentId);
 
         if (tournamentOptional.isEmpty()) {
-            throw new IllegalArgumentException("Tournament with id " + tournamentId + "doesn't exists!");
+            throw new NoTournamentWithSuchIdException("Tournament with id " + tournamentId + "doesn't exists!");
         }
 
         return tournamentOptional.get();
     }
 
     @Override
-    public Optional<MatchDTO> getById(Long matchId) {
-        return matchesRepository.findById(matchId)
-                .map(MatchDTO::fromEntity);
+    public MatchDTO getById(Long matchId) {
+        return MatchDTO.fromEntity(matchesRepository.findById(matchId)
+                .orElseThrow(() -> new NoMatchWithSuchIdException(
+                        String.format("Match with id %d does not exist!", matchId)
+                )));
     }
 
     @Override
-    public void deleteById(Long matchId) {
+    public MatchDTO deleteById(Long matchId) {
+        MatchDTO oldMatch = getById(matchId);
         matchesRepository.deleteById(matchId);
+        return oldMatch;
     }
 
     @Override
-    public void updateResults(Long matchId, MatchResultsDTO newResults) {
+    public MatchDTO updateResults(Long matchId, MatchResultsDTO newResults) {
         Match match = getMatchEntityById(matchId);
         if (match.getStatus() == MatchStatus.COMPLETED) {
             throw new CompletedMatchException(matchId);
@@ -101,21 +104,21 @@ public class MatchServiceImpl implements MatchService {
 
         match.setTeam1Points(newResults.getTeam1Points());
         match.setTeam2Points(newResults.getTeam2Points());
-        matchesRepository.save(match);
+        return MatchDTO.fromEntity(matchesRepository.save(match));
     }
 
     @Override
-    public void markAsFinished(Long matchId) {
+    public MatchDTO markAsFinished(Long matchId) {
         Match match = getMatchEntityById(matchId);
         match.setStatus(MatchStatus.COMPLETED);
-        matchesRepository.save(match);
+        return MatchDTO.fromEntity(matchesRepository.save(match));
     }
 
     private Match getMatchEntityById(Long matchId) {
         Optional<Match> matchOptional = matchesRepository.findById(matchId);
 
         if (matchOptional.isEmpty()) {
-            throw new IllegalArgumentException("Match with id " + matchId + " doesn't exists!");
+            throw new NoMatchWithSuchIdException("Match with id " + matchId + " doesn't exists!");
         }
 
         return matchOptional.get();

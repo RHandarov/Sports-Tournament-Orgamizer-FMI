@@ -3,8 +3,14 @@ package fmi.sports.tournament.organizer.backend.entities.tournament.match;
 import fmi.sports.tournament.organizer.backend.entities.team.Team;
 import fmi.sports.tournament.organizer.backend.entities.tournament.Tournament;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 
 @Entity
+@AllArgsConstructor
+@Data
+@Builder
 @Table(name = "matches")
 public class Match {
     @Id

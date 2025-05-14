@@ -1,6 +1,7 @@
 package fmi.sports.tournament.organizer.backend.exceptions.handler;
 
 import fmi.sports.tournament.organizer.backend.exceptions.*;
+import fmi.sports.tournament.organizer.backend.response.MatchResponse;
 import fmi.sports.tournament.organizer.backend.response.ResponseResult;
 import fmi.sports.tournament.organizer.backend.response.TeamResponse;
 import fmi.sports.tournament.organizer.backend.response.TournamentResponse;
@@ -57,6 +58,36 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(
                         HttpStatus.BAD_REQUEST)
                 .body(TeamResponse.builder().responseResult(ResponseResult.INSUFFICIENT_MONEY).message(ex.getMessage()).build()
+                );
+    }
+
+    @ExceptionHandler(NoMatchWithSuchIdException.class)
+    public ResponseEntity<MatchResponse> handleNoMatchWithSuchIdException(NoMatchWithSuchIdException ex) {
+        return ResponseEntity.status(
+                        HttpStatus.NOT_FOUND)
+                .body(MatchResponse.builder().responseResult(ResponseResult.ID_NOT_FOUND).message(ex.getMessage()).build()
+                );
+    }
+
+    @ExceptionHandler(TeamNotParticipatingException.class)
+    public ResponseEntity<MatchResponse> handleTeamNotParticipatingException(TeamNotParticipatingException ex) {
+        return ResponseEntity.badRequest()
+                .body(
+                        MatchResponse.builder()
+                                .responseResult(ResponseResult.TEAM_NOT_PARTICIPATING_IN_TOURNAMENT)
+                                .message(ex.getMessage())
+                                .build()
+                );
+    }
+
+    @ExceptionHandler(CompletedMatchException.class)
+    public ResponseEntity<MatchResponse> handleCompletedMatchException(CompletedMatchException ex) {
+        return ResponseEntity.badRequest()
+                .body(
+                        MatchResponse.builder()
+                                .responseResult(ResponseResult.MATCH_ALREADY_COMPLETED)
+                                .message(ex.getMessage())
+                                .build()
                 );
     }
 
