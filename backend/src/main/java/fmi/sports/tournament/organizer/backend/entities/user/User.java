@@ -3,12 +3,16 @@ package fmi.sports.tournament.organizer.backend.entities.user;
 import fmi.sports.tournament.organizer.backend.entities.team.Participant;
 import fmi.sports.tournament.organizer.backend.entities.team.Team;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
+@AllArgsConstructor
+@Builder
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

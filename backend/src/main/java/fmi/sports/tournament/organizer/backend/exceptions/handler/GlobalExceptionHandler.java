@@ -1,10 +1,7 @@
 package fmi.sports.tournament.organizer.backend.exceptions.handler;
 
 import fmi.sports.tournament.organizer.backend.exceptions.*;
-import fmi.sports.tournament.organizer.backend.response.MatchResponse;
-import fmi.sports.tournament.organizer.backend.response.ResponseResult;
-import fmi.sports.tournament.organizer.backend.response.TeamResponse;
-import fmi.sports.tournament.organizer.backend.response.TournamentResponse;
+import fmi.sports.tournament.organizer.backend.response.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -89,6 +86,15 @@ public class GlobalExceptionHandler {
                                 .message(ex.getMessage())
                                 .build()
                 );
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<UserResponse> handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
+        return ResponseEntity.badRequest()
+                .body(UserResponse.builder()
+                        .responseResult(ResponseResult.USER_ALREADY_EXISTS)
+                        .message(ex.getMessage())
+                        .build());
     }
 
     @ExceptionHandler(Exception.class)
