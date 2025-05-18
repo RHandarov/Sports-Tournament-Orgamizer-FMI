@@ -97,6 +97,24 @@ public class GlobalExceptionHandler {
                         .build());
     }
 
+    @ExceptionHandler(NoUserWithSuchEmailException.class)
+    public ResponseEntity<LoginResponse> handleNoUserWithSuchEmailException(NoUserWithSuchEmailException ex) {
+        return ResponseEntity.badRequest()
+                .body(LoginResponse.builder()
+                        .responseResult(ResponseResult.NOT_EXISTING_USER)
+                        .message(ex.getMessage())
+                        .build());
+    }
+
+    @ExceptionHandler(IncorrectPasswordException.class)
+    public ResponseEntity<LoginResponse> handelIncorrectPasswordException(IncorrectPasswordException ex) {
+        return ResponseEntity.badRequest()
+                .body(LoginResponse.builder()
+                        .responseResult(ResponseResult.WRONG_PASSWORD)
+                        .message(ex.getMessage())
+                        .build());
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGenericException(Exception ex) {
         ex.printStackTrace();

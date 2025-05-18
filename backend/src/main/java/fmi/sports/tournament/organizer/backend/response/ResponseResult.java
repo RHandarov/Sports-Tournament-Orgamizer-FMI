@@ -1,7 +1,6 @@
 package fmi.sports.tournament.organizer.backend.response;
 
 public enum ResponseResult {
-
     SUCCESSFULLY_CREATED,
     SUCCESSFULLY_UPDATED,
     SUCCESSFULLY_DELETED,
@@ -16,5 +15,8 @@ public enum ResponseResult {
     SUCCESSFULLY_SCHEDULED,
     TEAM_NOT_PARTICIPATING_IN_TOURNAMENT,
     MATCH_ALREADY_COMPLETED,
-    USER_ALREADY_EXISTS
+    USER_ALREADY_EXISTS,
+    NOT_EXISTING_USER,
+    WRONG_PASSWORD,
+    SUCCESSFULLY_SIGNED_IN
 }

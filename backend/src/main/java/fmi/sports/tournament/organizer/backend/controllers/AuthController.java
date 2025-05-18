@@ -1,7 +1,9 @@
 package fmi.sports.tournament.organizer.backend.controllers;
 
+import fmi.sports.tournament.organizer.backend.dtos.CredentialsDTO;
 import fmi.sports.tournament.organizer.backend.dtos.NewUserDTO;
 import fmi.sports.tournament.organizer.backend.dtos.UserDTO;
+import fmi.sports.tournament.organizer.backend.response.LoginResponse;
 import fmi.sports.tournament.organizer.backend.response.ResponseResult;
 import fmi.sports.tournament.organizer.backend.response.UserResponse;
 import fmi.sports.tournament.organizer.backend.services.UserService;
@@ -30,5 +32,14 @@ public class AuthController {
                 .body(UserResponse.fromDTO(newUser)
                         .responseResult(ResponseResult.SUCCESSFULLY_REGISTERED)
                         .build());
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody CredentialsDTO credentialsDTO) {
+        return ResponseEntity.ok(
+                LoginResponse.fromDTO(userService.login(credentialsDTO))
+                        .responseResult(ResponseResult.SUCCESSFULLY_SIGNED_IN)
+                        .build()
+        );
     }
 }
