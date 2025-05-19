@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,4 +35,5 @@ public class UserResponse {
     private boolean isActive;
     private ResponseResult responseResult;
     private String message;
+    private Map<String, String> errors;
 }

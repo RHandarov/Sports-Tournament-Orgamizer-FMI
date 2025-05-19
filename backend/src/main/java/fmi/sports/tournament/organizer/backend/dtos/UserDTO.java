@@ -1,6 +1,8 @@
 package fmi.sports.tournament.organizer.backend.dtos;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import fmi.sports.tournament.organizer.backend.entities.user.User;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -26,10 +28,23 @@ public class UserDTO {
     }
 
     private Long id;
+
+    @Size(min = 4, max = 20, message = "First Name must be between 4 and 20 characters")
+    @Pattern(regexp = "^[A-Za-z]+$", message = "First name must contain only English letters")
     private String firstName;
+
+    @Size(min = 4, max = 20, message = "Username must be between 4 and 20 characters")
+    @Pattern(regexp = "^[A-Za-z]+$", message = "Username must contain only English letters")
     private String lastName;
+
+    @Email(message = "Not a valid Email pattern")
     private String email;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @NotNull(message = "Birth date is required")
+    @Past(message = "Birth date must be in the past")
     private LocalDate birthDate;
+
     private LocalDate creationDate;
     private boolean isActive;
 }

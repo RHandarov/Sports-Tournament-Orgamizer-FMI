@@ -7,6 +7,7 @@ import fmi.sports.tournament.organizer.backend.response.LoginResponse;
 import fmi.sports.tournament.organizer.backend.response.ResponseResult;
 import fmi.sports.tournament.organizer.backend.response.UserResponse;
 import fmi.sports.tournament.organizer.backend.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponse> registerNewUser(@RequestBody NewUserDTO newUserDTO) {
+    public ResponseEntity<UserResponse> registerNewUser(@Valid @RequestBody NewUserDTO newUserDTO) {
         UserDTO newUser = userService.registerUser(newUserDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(UserResponse.fromDTO(newUser)

@@ -1,11 +1,16 @@
 package fmi.sports.tournament.organizer.backend.exceptions.handler;
 
+import fmi.sports.tournament.organizer.backend.entities.user.User;
 import fmi.sports.tournament.organizer.backend.exceptions.*;
 import fmi.sports.tournament.organizer.backend.response.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -13,7 +18,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoTournamentWithSuchIdException.class)
     public ResponseEntity<TournamentResponse> handleNoTournamentWithSuchIdException(NoTournamentWithSuchIdException ex) {
         return ResponseEntity.status(
-                HttpStatus.NOT_FOUND)
+                        HttpStatus.NOT_FOUND)
                 .body(TournamentResponse.builder().responseResult(ResponseResult.ID_NOT_FOUND).message(ex.getMessage()).build()
                 );
     }
@@ -121,6 +126,25 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body("Session token is invalid");
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<UserResponse> handleValidationErrors(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+
+        ex.getBindingResult().getFieldErrors().forEach(error ->
+                errors.put(error.getField(), error.getDefaultMessage())
+        );
+
+        return ResponseEntity
+                .badRequest()
+                .body(
+                        UserResponse
+                                .builder()
+                                .responseResult(ResponseResult.INVALID_REQUEST_DATA)
+                                .errors(errors)
+                                .build()
+                );
     }
 
     @ExceptionHandler(Exception.class)
