@@ -9,5 +9,5 @@ import org.springframework.context.annotation.Configuration;
 @Data
 public class JWTConfig {
     private String signingSecret;
-    private long expirationImNs;
+    private long expiration;
 }
