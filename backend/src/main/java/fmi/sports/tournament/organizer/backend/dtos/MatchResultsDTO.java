@@ -1,7 +1,13 @@
 package fmi.sports.tournament.organizer.backend.dtos;
 
+import jakarta.validation.constraints.Positive;
+
 public class MatchResultsDTO {
+
+    @Positive(message = "Team 1 points must be a positive number")
     private Integer team1Points;
+
+    @Positive(message = "Team 2 points must be a positive number")
     private Integer team2Points;
 
     public MatchResultsDTO(Integer team1Points, Integer team2Points) {

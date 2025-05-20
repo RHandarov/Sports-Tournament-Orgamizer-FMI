@@ -36,7 +36,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody CredentialsDTO credentialsDTO) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody CredentialsDTO credentialsDTO) {
         return ResponseEntity.ok(
                 LoginResponse.fromDTO(userService.login(credentialsDTO))
                         .responseResult(ResponseResult.SUCCESSFULLY_SIGNED_IN)

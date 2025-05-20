@@ -6,6 +6,7 @@ import fmi.sports.tournament.organizer.backend.entities.tournament.match.Match;
 import fmi.sports.tournament.organizer.backend.response.MatchResponse;
 import fmi.sports.tournament.organizer.backend.response.ResponseResult;
 import fmi.sports.tournament.organizer.backend.services.MatchService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class MatchController {
 
     @PostMapping
     public ResponseEntity<MatchResponse> schedule(@PathVariable("tId") Long tournamentId,
-                                                  @RequestBody MatchDTO newMatch) {
+                                                  @Valid @RequestBody MatchDTO newMatch) {
         newMatch.setTournamentId(tournamentId);
         MatchDTO scheduledMatch = matchService.schedule(newMatch);
         return ResponseEntity.
@@ -38,7 +39,7 @@ public class MatchController {
     }
 
     @GetMapping
-    public List<MatchDTO> getAllMatchedForTournament(@PathVariable("tId") Long tournamentId) {
+    public List<MatchDTO> getAllMatchedForTournament( @PathVariable("tId") Long tournamentId) {
         return matchService.getAllForTournament(tournamentId);
     }
 
@@ -55,7 +56,7 @@ public class MatchController {
 
     @PatchMapping("/{mId}/results")
     public ResponseEntity<MatchResponse> updateMatchScore(@PathVariable("mId") Long matchId,
-                                           @RequestBody MatchResultsDTO newScore) {
+                                                          @Valid @RequestBody MatchResultsDTO newScore) {
         MatchDTO updatedMatch = matchService.updateResults(matchId, newScore);
         return ResponseEntity.ok()
                 .body(

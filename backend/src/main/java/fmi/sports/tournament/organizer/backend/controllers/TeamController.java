@@ -4,6 +4,7 @@ import fmi.sports.tournament.organizer.backend.dtos.TeamDTO;
 import fmi.sports.tournament.organizer.backend.response.ResponseResult;
 import fmi.sports.tournament.organizer.backend.response.TeamResponse;
 import fmi.sports.tournament.organizer.backend.services.TeamService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ public class TeamController {
     }
 
     @PostMapping
-    public ResponseEntity<TeamResponse> create(@RequestBody TeamDTO newTeam) {
+    public ResponseEntity<TeamResponse> create(@Valid @RequestBody TeamDTO newTeam) {
         TeamDTO teamDTO = teamService.create(newTeam);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -49,7 +50,7 @@ public class TeamController {
     }
 
     @PutMapping
-    public ResponseEntity<TeamResponse> update(@RequestBody TeamDTO updatedTeams) {
+    public ResponseEntity<TeamResponse> update(@Valid @RequestBody TeamDTO updatedTeams) {
 
         TeamDTO updated = teamService.update(updatedTeams);
 

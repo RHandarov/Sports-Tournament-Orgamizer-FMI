@@ -14,7 +14,16 @@ import java.io.IOException;
 public class AuthFilter extends OncePerRequestFilter {
     private static final int PREFIX_LENGTH = 7;
 
+    private static final String BAD_AUTHORIZATION_MESSAGE  = """
+            {
+                "message": "Access denied",
+                "responseResult": "FORBIDDEN"
+            }
+            """;
+
+
     private final JWTService jwtService;
+
 
     @Autowired
     public AuthFilter(JWTService jwtService) {
@@ -29,6 +38,8 @@ public class AuthFilter extends OncePerRequestFilter {
                 || !token.startsWith("Bearer ")
                 || !jwtService.isTokenValid(token.substring(PREFIX_LENGTH))) {
             response.setStatus(HttpStatus.FORBIDDEN.value());
+            response.setContentType("application/json");
+            response.getWriter().write(BAD_AUTHORIZATION_MESSAGE);
             return;
         }
 

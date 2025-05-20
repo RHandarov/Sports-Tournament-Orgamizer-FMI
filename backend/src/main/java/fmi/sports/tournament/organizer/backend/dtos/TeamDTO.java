@@ -2,6 +2,10 @@ package fmi.sports.tournament.organizer.backend.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fmi.sports.tournament.organizer.backend.entities.team.Team;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 public class TeamDTO {
     private static final Long ID_NOT_SET = -1L;
@@ -18,13 +22,19 @@ public class TeamDTO {
     private Long id;
 
     @JsonProperty(value = "teamName")
+    @NotNull(message = "Team name is required")
+    @NotEmpty(message = "Team name must not be empty")
     private String name;
 
+    @Email(message = "Not a valid Email pattern")
     @JsonProperty(value = "contactEmail")
     private String email;
+
+    @Positive(message = "Budget must be a positive number")
     private Double budget;
 
     @JsonProperty(value = "maxMembers")
+    @Positive(message = "Max team members must be a positive number")
     private Integer size;
     private String secretCode;
 

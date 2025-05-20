@@ -6,6 +6,7 @@ import fmi.sports.tournament.organizer.backend.response.ResponseResult;
 import fmi.sports.tournament.organizer.backend.response.TeamResponse;
 import fmi.sports.tournament.organizer.backend.response.TournamentResponse;
 import fmi.sports.tournament.organizer.backend.services.TournamentService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +43,7 @@ public class TournamentController {
     }
 
     @PostMapping
-    public ResponseEntity<TournamentResponse> create(@RequestBody TournamentDTO newTournament) {
+    public ResponseEntity<TournamentResponse> create(@Valid @RequestBody TournamentDTO newTournament) {
         TournamentDTO tournamentDTO = tournamentService.create(newTournament);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 TournamentResponse
@@ -53,7 +54,7 @@ public class TournamentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TournamentResponse> update(@RequestBody TournamentDTO updatedTournament, @PathVariable long id) {
+    public ResponseEntity<TournamentResponse> update(@Valid @RequestBody TournamentDTO updatedTournament, @PathVariable long id) {
         tournamentService.updateById(updatedTournament, id);
 
         return ResponseEntity.ok(

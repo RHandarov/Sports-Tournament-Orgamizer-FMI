@@ -2,6 +2,9 @@ package fmi.sports.tournament.organizer.backend.dtos;
 
 import fmi.sports.tournament.organizer.backend.entities.tournament.match.Match;
 import fmi.sports.tournament.organizer.backend.entities.tournament.match.MatchStatus;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 public class MatchDTO {
     public static final Long ID_NOT_SET = -1L;
@@ -20,12 +23,31 @@ public class MatchDTO {
     }
 
     private Long id;
+
+    @NotNull(message = "Tournament ID is required")
+    @Positive(message = "Tournament ID must be a positive number")
     private Long tournamentId;
+
+    @NotNull(message = "Team 1 ID is required")
+    @Positive(message = "Team 1 ID must be a positive number")
     private Long team1Id;
+
+    @NotNull(message = "Team 1 points are required")
+    @Min(value = 0, message = "Team 1 points must be zero or a positive number")
     private Integer team1Points;
+
+    @NotNull(message = "Team 2 ID is required")
+    @Positive(message = "Team 2 ID must be a positive number")
     private Long team2Id;
+
+    @NotNull(message = "Team 2 points are required")
+    @Min(value = 0, message = "Team 2 points must be zero or a positive number")
     private Integer team2Points;
+
+    @NotNull(message = "Venue is required")
     private String venue;
+
+    @NotNull(message = "Match status is required")
     private MatchStatus status;
 
     public MatchDTO() {
