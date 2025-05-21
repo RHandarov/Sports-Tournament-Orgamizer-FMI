@@ -10,7 +10,9 @@ import fmi.sports.tournament.organizer.backend.exceptions.IncorrectPasswordExcep
 import fmi.sports.tournament.organizer.backend.exceptions.NoUserWithSuchEmailException;
 import fmi.sports.tournament.organizer.backend.exceptions.NoUserWithSuchIdException;
 import fmi.sports.tournament.organizer.backend.exceptions.UserAlreadyExistsException;
+import fmi.sports.tournament.organizer.backend.repositories.SessionsRepository;
 import fmi.sports.tournament.organizer.backend.repositories.UsersRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,14 +26,16 @@ public class UserServiceImpl implements UserService {
     private final UsersRepository usersRepository;
     private final JWTService jwtService;
     private final PasswordService passwordService;
+    private final SessionsRepository sessionsRepository;
 
     @Autowired
     public UserServiceImpl(UsersRepository usersRepository,
                            JWTService jwtService,
-                           PasswordService passwordService) {
+                           PasswordService passwordService, SessionsRepository sessionsRepository) {
         this.usersRepository = usersRepository;
         this.jwtService = jwtService;
         this.passwordService = passwordService;
+        this.sessionsRepository = sessionsRepository;
     }
 
     @Override
@@ -96,5 +100,22 @@ public class UserServiceImpl implements UserService {
         user.setLastName(newUserInfo.getLastName());
         user.setBirthDate(newUserInfo.getBirthDate());
         usersRepository.save(user);
+    }
+
+    @Transactional
+    @Override
+    public void deleteUser(Long id) {
+        User user = usersRepository.findById(id).orElseThrow(
+                () -> new NoUserWithSuchIdException(String.format("User with id %d does not exist", id))
+        );
+
+        sessionsRepository.deleteById(id);
+        user.getFollowedTeams().clear();
+        user.setParticipant(null);
+
+        usersRepository.save(user);
+        usersRepository.deleteById(id);
+
+
     }
 }

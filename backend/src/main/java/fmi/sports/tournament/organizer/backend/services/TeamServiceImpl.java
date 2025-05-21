@@ -1,11 +1,17 @@
 package fmi.sports.tournament.organizer.backend.services;
 
+import fmi.sports.tournament.organizer.backend.dtos.ParticipantRegisterDTO;
 import fmi.sports.tournament.organizer.backend.dtos.TeamDTO;
 import fmi.sports.tournament.organizer.backend.entities.auth.TokenGenerator;
+import fmi.sports.tournament.organizer.backend.entities.team.Participant;
 import fmi.sports.tournament.organizer.backend.entities.team.Team;
 import fmi.sports.tournament.organizer.backend.entities.tournament.Tournament;
-import fmi.sports.tournament.organizer.backend.exceptions.NoTeamWithSuchIdException;
+import fmi.sports.tournament.organizer.backend.entities.user.User;
+import fmi.sports.tournament.organizer.backend.exceptions.*;
+import fmi.sports.tournament.organizer.backend.repositories.ParticipantRepository;
 import fmi.sports.tournament.organizer.backend.repositories.TeamsRepository;
+import fmi.sports.tournament.organizer.backend.repositories.UsersRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +24,14 @@ public class TeamServiceImpl implements TeamService {
     private static final int SECRET_CODE_LENGTH = 9;
 
     private final TeamsRepository teamsRepository;
+    private final UsersRepository userRepository;
+    private final ParticipantRepository participantRepository;
 
     @Autowired
-    public TeamServiceImpl(TeamsRepository teamsRepository) {
+    public TeamServiceImpl(TeamsRepository teamsRepository, UsersRepository userRepository, ParticipantRepository participantRepository) {
         this.teamsRepository = teamsRepository;
+        this.userRepository = userRepository;
+        this.participantRepository = participantRepository;
     }
 
     @Override
@@ -66,12 +76,7 @@ public class TeamServiceImpl implements TeamService {
         return TeamDTO.fromEntity(saved);
     }
 
-    private Team getTeamEntityById(Long teamId) {
-        return teamsRepository.findById(teamId).orElseThrow(
-                () -> new NoTeamWithSuchIdException(String.format("Team with id %d does not exist", teamId))
-        );
-    }
-
+    @Transactional
     @Override
     public TeamDTO deleteById(Long teamId) {
         Team team = getTeamEntityById(teamId);
@@ -82,7 +87,56 @@ public class TeamServiceImpl implements TeamService {
 
         team.getTournaments().clear();
 
-        teamsRepository.deleteById(teamId);
+        participantRepository.deleteByTeamId(teamId);
+        team.getParticipants().clear();
+
+        teamsRepository.save(team);
+        teamsRepository.delete(team);
+
         return TeamDTO.fromEntity(team);
     }
+
+
+
+    @Override
+    public void registerUserForTeam(Long userId, Long teamId, ParticipantRegisterDTO participantRegisterDTO) {
+        User user = getUserEntityById(userId);
+        Team team = getTeamEntityById(teamId);
+
+        if (!team.getSecretCode().equals(participantRegisterDTO.getSecretCode())) {
+            throw new InvalidSecretCodeException(String.format("Invalid secret code for team with id %d", teamId));
+        }
+
+        if (team.getParticipants().stream().map(Participant::getUser).toList().contains(user)) {
+            throw new UserAlreadyRegisteredForTeamException(String.format("User with id %d is already registered for team with id %d", userId, teamId));
+        }
+
+        if (team.getParticipants().size() >= team.getSize()) {
+            throw new TeamAlreadyAtMaxSizeException(String.format("Team with id %d is already at full size", teamId));
+        }
+
+        Participant participant = Participant
+                .builder()
+                .team(team)
+                .user(user)
+                .category(participantRegisterDTO.getCategory())
+                .build();
+        team.getParticipants().add(participant);
+        teamsRepository.save(team);
+
+    }
+
+    private Team getTeamEntityById(Long teamId) {
+        return teamsRepository.findById(teamId).orElseThrow(
+                () -> new NoTeamWithSuchIdException(String.format("Team with id %d does not exist", teamId))
+        );
+    }
+
+    private User getUserEntityById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(
+                () -> new NoUserWithSuchIdException(String.format("User with id %d does not exist", userId))
+        );
+    }
+
+
 }

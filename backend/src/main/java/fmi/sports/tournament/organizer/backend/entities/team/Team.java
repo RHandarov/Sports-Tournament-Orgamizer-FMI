@@ -23,7 +23,7 @@ public class Team {
     private String secretCode;
     //TODO: add other columns in DB model
 
-    @OneToMany(mappedBy = "team")
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Participant> participants;
 
     @ManyToMany(mappedBy = "followedTeams")

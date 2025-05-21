@@ -1,5 +1,6 @@
 package fmi.sports.tournament.organizer.backend.services;
 
+import fmi.sports.tournament.organizer.backend.dtos.ParticipantRegisterDTO;
 import fmi.sports.tournament.organizer.backend.dtos.TeamDTO;
 import org.springframework.stereotype.Service;
 
@@ -13,4 +14,6 @@ public interface TeamService {
     TeamDTO create(TeamDTO newTeam);
     TeamDTO update(TeamDTO updatedTeam);
     TeamDTO deleteById(Long teamId);
+
+    void registerUserForTeam(Long userId, Long teamId, ParticipantRegisterDTO participantRegisterDTO);
 }

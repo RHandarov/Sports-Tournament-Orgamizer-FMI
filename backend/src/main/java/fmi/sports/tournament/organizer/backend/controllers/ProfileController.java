@@ -68,4 +68,22 @@ public class ProfileController {
                         .build()
         );
     }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<ProfileResponse> deleteProfile(@RequestHeader("Authorization") String authorizationHeader) {
+
+        String token = authorizationHeader.startsWith("Bearer ") ?
+                authorizationHeader.substring(7) : authorizationHeader;
+
+        User user = jwtService.getUser(token);
+        Long id = user.getId();
+        userService.deleteUser(id);
+
+        return ResponseEntity.ok(
+                ProfileResponse
+                        .fromEntity(user)
+                        .responseResult(ResponseResult.SUCCESSFULLY_DELETED)
+                        .build()
+        );
+    }
 }

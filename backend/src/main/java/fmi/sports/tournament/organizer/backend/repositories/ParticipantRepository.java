@@ -1,0 +1,13 @@
+package fmi.sports.tournament.organizer.backend.repositories;
+
+import fmi.sports.tournament.organizer.backend.entities.team.Participant;
+import fmi.sports.tournament.organizer.backend.entities.team.ParticipantId;
+import fmi.sports.tournament.organizer.backend.entities.user.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
+
+public interface ParticipantRepository extends CrudRepository<Participant, User> {
+
+    void deleteByTeamId(Long TeamId);
+
+}
