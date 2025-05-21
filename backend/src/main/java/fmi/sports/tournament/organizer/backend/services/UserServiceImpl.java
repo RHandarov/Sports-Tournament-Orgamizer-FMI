@@ -8,6 +8,7 @@ import fmi.sports.tournament.organizer.backend.entities.user.User;
 import fmi.sports.tournament.organizer.backend.entities.user.UserRole;
 import fmi.sports.tournament.organizer.backend.exceptions.IncorrectPasswordException;
 import fmi.sports.tournament.organizer.backend.exceptions.NoUserWithSuchEmailException;
+import fmi.sports.tournament.organizer.backend.exceptions.NoUserWithSuchIdException;
 import fmi.sports.tournament.organizer.backend.exceptions.UserAlreadyExistsException;
 import fmi.sports.tournament.organizer.backend.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,5 +76,25 @@ public class UserServiceImpl implements UserService {
                 .token(token)
                 .expires(jwtService.getExpirationTime(token))
                 .build();
+    }
+
+    @Override
+    public void updateUserInfo(Long id, NewUserDTO newUserInfo) {
+        User user = usersRepository.findById(id).orElseThrow(
+                () -> new NoUserWithSuchIdException(String.format("User with id %d does not exist", id))
+        );
+
+        User userWithNewEmail = usersRepository.findByEmail(newUserInfo.getEmail()).orElse(null);
+        if (userWithNewEmail != null && !userWithNewEmail.getId().equals(user.getId())) {
+            throw new UserAlreadyExistsException(String.format("Email %s is already taken", newUserInfo.getEmail()));
+        }
+
+        user.setEmail(newUserInfo.getEmail());
+        user.setPassword(newUserInfo.getPassword());
+        user.setFirstName(newUserInfo.getFirstName());
+        user.setPassword(passwordService.hash(newUserInfo.getPassword()));
+        user.setLastName(newUserInfo.getLastName());
+        user.setBirthDate(newUserInfo.getBirthDate());
+        usersRepository.save(user);
     }
 }

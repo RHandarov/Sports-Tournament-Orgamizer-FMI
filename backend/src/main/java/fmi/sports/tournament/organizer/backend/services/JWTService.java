@@ -5,6 +5,8 @@ import fmi.sports.tournament.organizer.backend.dtos.UserDTO;
 import fmi.sports.tournament.organizer.backend.entities.auth.Session;
 import fmi.sports.tournament.organizer.backend.entities.user.User;
 import fmi.sports.tournament.organizer.backend.exceptions.InvalidTokenException;
+import fmi.sports.tournament.organizer.backend.exceptions.NoUserWithSuchEmailException;
+import fmi.sports.tournament.organizer.backend.exceptions.NoSessionWithSuchIdException;
 import fmi.sports.tournament.organizer.backend.repositories.SessionsRepository;
 import fmi.sports.tournament.organizer.backend.repositories.UsersRepository;
 import io.jsonwebtoken.Jwts;
@@ -80,7 +82,7 @@ public class JWTService {
         sessionsRepository.save(session);
     }
 
-    public UserDTO getUser(String token) {
+    public UserDTO getUserDTO(String token) {
         if (!isTokenValid(token)) {
             throw new InvalidTokenException("This JWT token is not valid!");
         }
@@ -115,5 +117,16 @@ public class JWTService {
         }
 
         return true;
+    }
+
+    public User getUser(String token) {
+        if (!isTokenValid(token)) {
+            throw new InvalidTokenException("This JWT token is not valid!");
+        }
+
+        Optional<Session> sessionOptional = sessionsRepository.findBySessionId(token);
+        return sessionOptional.orElseThrow(
+                () -> new NoSessionWithSuchIdException("This session does not exist")
+        ).getUser();
     }
 }

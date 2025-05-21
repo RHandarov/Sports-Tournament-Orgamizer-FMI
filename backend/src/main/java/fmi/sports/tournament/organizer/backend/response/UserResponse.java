@@ -1,5 +1,6 @@
 package fmi.sports.tournament.organizer.backend.response;
 
+import fmi.sports.tournament.organizer.backend.dtos.NewUserDTO;
 import fmi.sports.tournament.organizer.backend.dtos.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +25,14 @@ public class UserResponse {
                 .birthDate(userDTO.getBirthDate())
                 .creationDate(userDTO.getCreationDate())
                 .isActive(userDTO.isActive());
+    }
+
+    public static UserResponseBuilder fromDTO(NewUserDTO newUserDTO) {
+        return UserResponse.builder()
+                .firstName(newUserDTO.getFirstName())
+                .lastName(newUserDTO.getLastName())
+                .email(newUserDTO.getEmail())
+                .birthDate(newUserDTO.getBirthDate());
     }
 
     private Long id;
