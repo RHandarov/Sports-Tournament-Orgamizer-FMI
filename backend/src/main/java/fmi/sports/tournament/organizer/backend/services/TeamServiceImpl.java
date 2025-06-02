@@ -11,12 +11,14 @@ import fmi.sports.tournament.organizer.backend.exceptions.*;
 import fmi.sports.tournament.organizer.backend.repositories.ParticipantRepository;
 import fmi.sports.tournament.organizer.backend.repositories.TeamsRepository;
 import fmi.sports.tournament.organizer.backend.repositories.UsersRepository;
+import jakarta.servlet.http.Part;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -97,19 +99,30 @@ public class TeamServiceImpl implements TeamService {
     }
 
 
-
     @Override
+    @Transactional
     public void registerUserForTeam(Long userId, Long teamId, ParticipantRegisterDTO participantRegisterDTO) {
         User user = getUserEntityById(userId);
         Team team = getTeamEntityById(teamId);
+
 
         if (!team.getSecretCode().equals(participantRegisterDTO.getSecretCode())) {
             throw new InvalidSecretCodeException(String.format("Invalid secret code for team with id %d", teamId));
         }
 
+
         if (team.getParticipants().stream().map(Participant::getUser).toList().contains(user)) {
             throw new UserAlreadyRegisteredForTeamException(String.format("User with id %d is already registered for team with id %d", userId, teamId));
         }
+
+        Optional<Participant> participantByUserId = participantRepository.findByUserId(userId);
+        participantByUserId.ifPresent(participant -> {
+            if (!teamId.equals(participantByUserId.get().getTeam().getId())) {
+                throw new UserAlreadyRegisteredForAnotherTeamException(String.format(
+                        "User with id %d is already registered for a different team",userId));
+            }
+        });
+
 
         if (team.getParticipants().size() >= team.getSize()) {
             throw new TeamAlreadyAtMaxSizeException(String.format("Team with id %d is already at full size", teamId));
@@ -121,9 +134,29 @@ public class TeamServiceImpl implements TeamService {
                 .user(user)
                 .category(participantRegisterDTO.getCategory())
                 .build();
+
         team.getParticipants().add(participant);
         teamsRepository.save(team);
 
+    }
+
+    @Override
+    @Transactional
+    public void removeUserForTeam(Long userId, Long teamId) {
+        Team team = getTeamEntityById(teamId);
+        User user = getUserEntityById(userId);
+        Set<Participant> participants = team.getParticipants();
+        List<Participant> list = participants.stream().filter(p -> p.getUser().equals(user)).toList();
+
+        if (list.isEmpty()) {
+            throw new UserNotInTeamException(String.format("User with id %d is not in team with id %d", userId, teamId));
+        }
+        Participant participant = list.getFirst();
+
+        participant.setTeam(null);
+        participant.setUser(null);
+
+        participants.remove(participant);
     }
 
     private Team getTeamEntityById(Long teamId) {

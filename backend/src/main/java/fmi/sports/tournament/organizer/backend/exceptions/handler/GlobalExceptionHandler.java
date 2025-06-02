@@ -147,6 +147,45 @@ public class GlobalExceptionHandler {
                 );
     }
 
+    @ExceptionHandler(UserAlreadyRegisteredForTeamException.class)
+    public ResponseEntity<TeamResponse> handleUserAlreadyRegisteredForTeamException(UserAlreadyRegisteredForTeamException ex) {
+        return ResponseEntity
+                .badRequest()
+                .body(
+                        TeamResponse
+                                .builder()
+                                .responseResult(ResponseResult.USER_ALREADY_REGISTERED_FOR_TEAM)
+                                .message(ex.getMessage())
+                                .build()
+                );
+    }
+
+    @ExceptionHandler(UserNotInTeamException.class)
+    public ResponseEntity<TeamResponse> handleUserNotInTeamException(UserNotInTeamException ex) {
+        return ResponseEntity
+                .badRequest()
+                .body(
+                        TeamResponse
+                                .builder()
+                                .responseResult(ResponseResult.USER_NOT_IN_TEAM)
+                                .message(ex.getMessage())
+                                .build()
+                );
+    }
+
+    @ExceptionHandler(UserAlreadyRegisteredForAnotherTeamException.class)
+    public ResponseEntity<TeamResponse> handleUserAlreadyRegisteredForAnotherTeamException(UserAlreadyRegisteredForAnotherTeamException ex) {
+        return ResponseEntity
+                .badRequest()
+                .body(
+                        TeamResponse
+                                .builder()
+                                .responseResult(ResponseResult.USER_ALREADY_REGISTERED_FOR_ANOTHER_TEAM)
+                                .message(ex.getMessage())
+                                .build()
+                );
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGenericException(Exception ex) {
         ex.printStackTrace();

@@ -87,8 +87,28 @@ public class TeamController {
 
         User user = jwtService.getUser(token);
         Long userId = user.getId();
-        teamService.registerUserForTeam(userId,teamId,participantRegisterDTO);
+        teamService.registerUserForTeam(userId, teamId, participantRegisterDTO);
 
         return ResponseEntity.ok("User successfully registered for team with id " + teamId);
+    }
+
+    @DeleteMapping("/{teamId}/participants")
+    ResponseEntity<TeamResponse> removeUserFromTeam(@RequestHeader("Authorization") String authorizationHeader,
+                                                    @PathVariable("teamId") Long teamId) {
+
+        String token = authorizationHeader.startsWith("Bearer ") ?
+                authorizationHeader.substring(7) : authorizationHeader;
+
+        User user = jwtService.getUser(token);
+        Long userId = user.getId();
+        teamService.removeUserForTeam(userId, teamId);
+
+        return ResponseEntity.ok(
+                TeamResponse
+                        .builder()
+                        .message(String.format("User with id %d successfully removed from team with id %d", userId, teamId))
+                        .responseResult(ResponseResult.SUCCESSFULLY_REMOVED_FROM_TEAM)
+                        .build()
+        );
     }
 }

@@ -16,4 +16,5 @@ public interface TeamService {
     TeamDTO deleteById(Long teamId);
 
     void registerUserForTeam(Long userId, Long teamId, ParticipantRegisterDTO participantRegisterDTO);
+    void removeUserForTeam(Long userId, Long teamId);
 }
