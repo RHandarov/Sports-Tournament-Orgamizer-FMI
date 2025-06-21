@@ -24,7 +24,7 @@ public class MatchDTO {
 
     private Long id;
 
-    @NotNull(message = "Tournament ID is required")
+//    @NotNull(message = "Tournament ID is required")
     @Positive(message = "Tournament ID must be a positive number")
     private Long tournamentId;
 

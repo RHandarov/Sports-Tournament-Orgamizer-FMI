@@ -3,8 +3,11 @@ package fmi.sports.tournament.organizer.backend.services;
 import fmi.sports.tournament.organizer.backend.dtos.TeamDTO;
 import fmi.sports.tournament.organizer.backend.dtos.TournamentDTO;
 import fmi.sports.tournament.organizer.backend.entities.team.Team;
+import fmi.sports.tournament.organizer.backend.entities.tournament.Standing;
+import fmi.sports.tournament.organizer.backend.entities.tournament.StandingId;
 import fmi.sports.tournament.organizer.backend.entities.tournament.Tournament;
 import fmi.sports.tournament.organizer.backend.exceptions.*;
+import fmi.sports.tournament.organizer.backend.repositories.StandingsRepository;
 import fmi.sports.tournament.organizer.backend.repositories.TeamsRepository;
 import fmi.sports.tournament.organizer.backend.repositories.TournamentsRepository;
 import jakarta.transaction.Transactional;
@@ -20,12 +23,15 @@ import java.util.stream.Collectors;
 public class TournamentServiceImpl implements TournamentService {
     private final TournamentsRepository tournamentsRepository;
     private final TeamsRepository teamsRepository;
+    private final StandingsRepository standingsRepository;
 
     @Autowired
     public TournamentServiceImpl(TournamentsRepository tournamentsRepository,
-                                 TeamsRepository teamsRepository) {
+                                 TeamsRepository teamsRepository,
+                                 StandingsRepository standingsRepository) {
         this.tournamentsRepository = tournamentsRepository;
         this.teamsRepository = teamsRepository;
+        this.standingsRepository = standingsRepository;
     }
 
     @Override
@@ -116,6 +122,12 @@ public class TournamentServiceImpl implements TournamentService {
         team.setBudget(team.getBudget() - tournament.getRegistrationFee());
         tournamentsRepository.save(tournament);
         teamsRepository.save(team);
+        standingsRepository.save(Standing
+                .builder()
+                .tournament(tournament)
+                .team(team)
+                .points(0)
+                .build());
     }
 
     @Override
@@ -136,6 +148,11 @@ public class TournamentServiceImpl implements TournamentService {
         team.setBudget(team.getBudget() + tournament.getRegistrationFee());
         tournamentsRepository.save(tournament);
         teamsRepository.save(team);
+        standingsRepository.deleteById(StandingId
+                .builder()
+                .tournamentId(tournament.getId())
+                .teamId(team.getId())
+                .build());
     }
 
     private Tournament getTournamentEntityById(Long tournamentId) {

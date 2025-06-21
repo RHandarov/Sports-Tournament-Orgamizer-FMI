@@ -147,6 +147,17 @@ public class GlobalExceptionHandler {
                 );
     }
 
+    @ExceptionHandler(NoParticipantWithIdException.class)
+    public ResponseEntity<UserResponse> handleNoParticipantWithIdException(NoParticipantWithIdException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(UserResponse
+                        .builder()
+                        .responseResult(ResponseResult.ID_NOT_FOUND)
+                        .message(ex.getMessage())
+                        .build());
+    }
+
     @ExceptionHandler(UserAlreadyRegisteredForTeamException.class)
     public ResponseEntity<TeamResponse> handleUserAlreadyRegisteredForTeamException(UserAlreadyRegisteredForTeamException ex) {
         return ResponseEntity

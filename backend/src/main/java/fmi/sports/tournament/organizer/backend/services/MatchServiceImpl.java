@@ -3,11 +3,14 @@ package fmi.sports.tournament.organizer.backend.services;
 import fmi.sports.tournament.organizer.backend.dtos.MatchDTO;
 import fmi.sports.tournament.organizer.backend.dtos.MatchResultsDTO;
 import fmi.sports.tournament.organizer.backend.entities.team.Team;
+import fmi.sports.tournament.organizer.backend.entities.tournament.Standing;
+import fmi.sports.tournament.organizer.backend.entities.tournament.StandingId;
 import fmi.sports.tournament.organizer.backend.entities.tournament.Tournament;
 import fmi.sports.tournament.organizer.backend.entities.tournament.match.Match;
 import fmi.sports.tournament.organizer.backend.entities.tournament.match.MatchStatus;
 import fmi.sports.tournament.organizer.backend.exceptions.*;
 import fmi.sports.tournament.organizer.backend.repositories.MatchesRepository;
+import fmi.sports.tournament.organizer.backend.repositories.StandingsRepository;
 import fmi.sports.tournament.organizer.backend.repositories.TeamsRepository;
 import fmi.sports.tournament.organizer.backend.repositories.TournamentsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +25,17 @@ public class MatchServiceImpl implements MatchService {
     private final MatchesRepository matchesRepository;
     private final TournamentsRepository tournamentsRepository;
     private final TeamsRepository teamsRepository;
+    private final StandingsRepository standingsRepository;
 
     @Autowired
     public MatchServiceImpl(MatchesRepository matchesRepository,
                             TournamentsRepository tournamentsRepository,
-                            TeamsRepository teamsRepository) {
+                            TeamsRepository teamsRepository,
+                            StandingsRepository standingsRepository) {
         this.matchesRepository = matchesRepository;
         this.tournamentsRepository = tournamentsRepository;
         this.teamsRepository = teamsRepository;
+        this.standingsRepository = standingsRepository;
     }
 
     @Override
@@ -111,6 +117,7 @@ public class MatchServiceImpl implements MatchService {
     public MatchDTO markAsFinished(Long matchId) {
         Match match = getMatchEntityById(matchId);
         match.setStatus(MatchStatus.COMPLETED);
+        updateStandings(match);
         return MatchDTO.fromEntity(matchesRepository.save(match));
     }
 
@@ -122,5 +129,40 @@ public class MatchServiceImpl implements MatchService {
         }
 
         return matchOptional.get();
+    }
+
+    private void updateStandings(Match match) {
+        Standing standing = null;
+        Standing standing2 = null;
+        if (match.getTeam1Points() > match.getTeam2Points()) {
+            standing = getStandingForTeam(match.getTournament(), match.getTeam1());
+            standing.setPoints(standing.getPoints() + 3);
+        } else if (match.getTeam1Points().equals(match.getTeam2Points())) {
+            standing = getStandingForTeam(match.getTournament(), match.getTeam1());
+            standing2 = getStandingForTeam(match.getTournament(), match.getTeam2());
+            standing.setPoints(standing.getPoints() + 1);
+            standing2.setPoints(standing2.getPoints() + 1);
+        } else {
+            standing = getStandingForTeam(match.getTournament(), match.getTeam2());
+            standing.setPoints(standing.getPoints() + 3);
+        }
+
+        if (standing != null) {
+            standingsRepository.save(standing);
+        }
+
+        if (standing2 != null) {
+            standingsRepository.save(standing2);
+        }
+    }
+
+    private Standing getStandingForTeam(Tournament tournament, Team team) {
+        return standingsRepository.findById(
+                StandingId
+                        .builder()
+                        .tournamentId(tournament.getId())
+                        .teamId(team.getId())
+                        .build()
+        ).get();
     }
 }

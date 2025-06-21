@@ -1,10 +1,11 @@
 package fmi.sports.tournament.organizer.backend.controllers;
 
-import fmi.sports.tournament.organizer.backend.dtos.ParticipantRegisterDTO;
-import fmi.sports.tournament.organizer.backend.dtos.TeamDTO;
+import fmi.sports.tournament.organizer.backend.dtos.*;
 import fmi.sports.tournament.organizer.backend.entities.user.User;
+import fmi.sports.tournament.organizer.backend.response.ParticipantResponse;
 import fmi.sports.tournament.organizer.backend.response.ResponseResult;
 import fmi.sports.tournament.organizer.backend.response.TeamResponse;
+import fmi.sports.tournament.organizer.backend.response.UserResponse;
 import fmi.sports.tournament.organizer.backend.services.JWTService;
 import fmi.sports.tournament.organizer.backend.services.TeamService;
 import jakarta.validation.Valid;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/teams")
@@ -93,7 +95,7 @@ public class TeamController {
     }
 
     @DeleteMapping("/{teamId}/participants")
-    ResponseEntity<TeamResponse> removeUserFromTeam(@RequestHeader("Authorization") String authorizationHeader,
+    public ResponseEntity<TeamResponse> removeUserFromTeam(@RequestHeader("Authorization") String authorizationHeader,
                                                     @PathVariable("teamId") Long teamId) {
 
         String token = authorizationHeader.startsWith("Bearer ") ?
@@ -110,5 +112,58 @@ public class TeamController {
                         .responseResult(ResponseResult.SUCCESSFULLY_REMOVED_FROM_TEAM)
                         .build()
         );
+    }
+
+    @GetMapping("/{teamId}/participants")
+    public List<ParticipantResponse> getAllParticipantsForTeam(@PathVariable("teamId") Long teamId) {
+        return teamService
+                .getAllParticipantsForTeam(teamId)
+                .stream()
+                .map(participantDTO -> ParticipantResponse.fromDTO(participantDTO).build())
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/{teamId}/participants/{participantId}")
+    public ResponseEntity<ParticipantResponse> getParticipantForTeamById(@PathVariable("teamId") Long teamId,
+                                                                  @PathVariable("participantId") Long participantId) {
+        ParticipantDTO participant = teamService.getParticipantInTeamById(teamId, participantId);
+        return ResponseEntity.ok()
+                .body(ParticipantResponse
+                        .fromDTO(participant)
+                        .responseResult(ResponseResult.SUCCESSFULLY_FOUND)
+                        .build());
+    }
+
+    @PutMapping("/{teamId}/participants")
+    public ResponseEntity<ParticipantResponse> updateParticipantCategory(@PathVariable("teamId") Long teamId,
+                                                                         @RequestBody ChangeParticipantCategoryDTO participantCategoryDTO) {
+        ParticipantDTO updatedParticipantDTO = teamService.updateParticipantCategory(teamId, participantCategoryDTO);
+        return ResponseEntity.ok(
+                ParticipantResponse
+                        .fromDTO(updatedParticipantDTO)
+                        .responseResult(ResponseResult.SUCCESSFULLY_UPDATED)
+                        .build()
+        );
+    }
+
+    @PostMapping("/{teamId}/followers/{userId}")
+    public void subscribeForTeam(@PathVariable("userId") Long userId,
+                                 @PathVariable("teamId") Long teamId) {
+        teamService.subscribeUserForTeam(teamId, userId);
+    }
+
+    @DeleteMapping("/{teamId}/followers/{userId}")
+    public void unsubscribeFromTeam(@PathVariable("userId") Long userId,
+                                    @PathVariable("teamId") Long teamId) {
+        teamService.unsubscribeFromTeam(teamId, userId);
+    }
+
+    @GetMapping("/{teamId}/followers")
+    public List<UserResponse> getAllFollowersForTeam(@PathVariable("teamId") Long teamId) {
+        return teamService
+                .getAllFollowers(teamId)
+                .stream()
+                .map(userDTO -> UserResponse.fromDTO(userDTO).build())
+                .collect(Collectors.toList());
     }
 }

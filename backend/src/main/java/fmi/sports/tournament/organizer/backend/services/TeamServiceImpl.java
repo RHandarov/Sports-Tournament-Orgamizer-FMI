@@ -1,7 +1,6 @@
 package fmi.sports.tournament.organizer.backend.services;
 
-import fmi.sports.tournament.organizer.backend.dtos.ParticipantRegisterDTO;
-import fmi.sports.tournament.organizer.backend.dtos.TeamDTO;
+import fmi.sports.tournament.organizer.backend.dtos.*;
 import fmi.sports.tournament.organizer.backend.entities.auth.TokenGenerator;
 import fmi.sports.tournament.organizer.backend.entities.team.Participant;
 import fmi.sports.tournament.organizer.backend.entities.team.Team;
@@ -157,6 +156,58 @@ public class TeamServiceImpl implements TeamService {
         participant.setUser(null);
 
         participants.remove(participant);
+    }
+
+    @Override
+    public List<ParticipantDTO> getAllParticipantsForTeam(Long teamId) {
+        return participantRepository.findAllByTeamId(teamId)
+                .stream()
+                .map(ParticipantDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public ParticipantDTO getParticipantInTeamById(Long teamId, Long participantId) {
+        return getAllParticipantsForTeam(teamId)
+                .stream()
+                .filter(participant -> participant.getUserId().equals(participantId))
+                .findFirst()
+                .orElseThrow(() -> new NoParticipantWithIdException(participantId));
+    }
+
+    @Override
+    public ParticipantDTO updateParticipantCategory(Long teamId, ChangeParticipantCategoryDTO participantCategoryDTO) {
+        Participant participant =
+                participantRepository.findByTeamIdAndUserId(teamId, participantCategoryDTO.getUserId())
+                        .orElseThrow(() -> new NoParticipantWithIdException(participantCategoryDTO.getUserId()));
+
+        participant.setCategory(participantCategoryDTO.getParticipantCategory());
+        return ParticipantDTO.fromEntity(participantRepository.save(participant));
+    }
+
+    @Override
+    public void subscribeUserForTeam(Long teamId, Long userId) {
+        User user = getUserEntityById(userId);
+        Team team = getTeamEntityById(teamId);
+        user.getFollowedTeams().add(team);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void unsubscribeFromTeam(Long teamId, Long userId) {
+        User user = getUserEntityById(userId);
+        Team team = getTeamEntityById(teamId);
+        user.getFollowedTeams().remove(team);
+        userRepository.save(user);
+    }
+
+    @Override
+    public List<UserDTO> getAllFollowers(Long teamId) {
+        Team team = getTeamEntityById(teamId);
+        return team.getFollowers()
+                .stream()
+                .map(UserDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
     private Team getTeamEntityById(Long teamId) {
