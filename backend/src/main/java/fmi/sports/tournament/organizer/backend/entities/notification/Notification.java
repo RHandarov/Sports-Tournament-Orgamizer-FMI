@@ -22,6 +22,8 @@ public class Notification {
     @MapsId("messageId")
     @ManyToOne
     private NotificationMessage message;
+
+    @Id
     private LocalDateTime creationTime;
     private boolean isRead;
 

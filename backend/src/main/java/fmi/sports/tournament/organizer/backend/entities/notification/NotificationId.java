@@ -1,24 +1,26 @@
 package fmi.sports.tournament.organizer.backend.entities.notification;
 
-import java.io.Serializable;
+import lombok.Data;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Objects;
+
+@Data
 public class NotificationId implements Serializable {
     private Long userId;
     private Long messageId;
+    private LocalDateTime creationTime;
 
-    public Long getUserId() {
-        return userId;
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        NotificationId that = (NotificationId) o;
+        return Objects.equals(userId, that.userId) && Objects.equals(messageId, that.messageId) && Objects.equals(creationTime, that.creationTime);
     }
 
-    public Long getMessageId() {
-        return messageId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public void setMessageId(Long messageId) {
-        this.messageId = messageId;
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId, messageId, creationTime);
     }
 }

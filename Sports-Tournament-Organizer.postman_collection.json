@@ -20,7 +20,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "some-token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQHNvbWVlbWFpbC5jb20iLCJpYXQiOjE3NTA1MTM5NzAsImV4cCI6MTc1MDUxNzU3MH0.7wpuAGHS5Pe_nCQeCN2RhNn5g1_0yv99JTUDjs7y7yM",
 											"type": "string"
 										}
 									]
@@ -68,11 +68,11 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "localhost:8081/api/tournaments/1/matches",
+									"raw": "localhost:8080/api/tournaments/1/matches",
 									"host": [
 										"localhost"
 									],
-									"port": "8081",
+									"port": "8080",
 									"path": [
 										"api",
 										"tournaments",
@@ -132,7 +132,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"scoreTeam1\": 3,\r\n    \"scoreTeam2\": 1\r\n}",
+									"raw": "{\r\n    \"team1Points\": 3,\r\n    \"team2Points\": 1\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -192,6 +192,16 @@
 						{
 							"name": "Mark match as finished",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQHNvbWVlbWFpbC5jb20iLCJpYXQiOjE3NTA1MTM5NzAsImV4cCI6MTc1MDUxNzU3MH0.7wpuAGHS5Pe_nCQeCN2RhNn5g1_0yv99JTUDjs7y7yM",
+											"type": "string"
+										}
+									]
+								},
 								"method": "PATCH",
 								"header": [],
 								"url": {
@@ -225,7 +235,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "some-token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQHNvbWVlbWFpbC5jb20iLCJpYXQiOjE3NTA1OTA5NzgsImV4cCI6MTc1MDU5NDU3OH0.RHR9qNf1mrLDWX4fdQiaX15KUJbuj67UcZJbDiOPNgM",
 											"type": "string"
 										}
 									]
@@ -258,7 +268,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "some-token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQHNvbWVlbWFpbC5jb20iLCJpYXQiOjE3NTA1MTM5NzAsImV4cCI6MTc1MDUxNzU3MH0.7wpuAGHS5Pe_nCQeCN2RhNn5g1_0yv99JTUDjs7y7yM",
 									"type": "string"
 								}
 							]
@@ -296,7 +306,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "some-token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQHNvbWVlbWFpbC5jb20iLCJpYXQiOjE3NTA1OTA5NzgsImV4cCI6MTc1MDU5NDU3OH0.RHR9qNf1mrLDWX4fdQiaX15KUJbuj67UcZJbDiOPNgM",
 									"type": "string"
 								}
 							]
@@ -372,14 +382,15 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/tournaments",
+							"raw": "localhost:8080/api/tournaments/1",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
 								"api",
-								"tournaments"
+								"tournaments",
+								"1"
 							]
 						}
 					},
@@ -454,52 +465,12 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "some-token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQHNvbWVlbWFpbC5jb20iLCJpYXQiOjE3NTA1MTM5NzAsImV4cCI6MTc1MDUxNzU3MH0.7wpuAGHS5Pe_nCQeCN2RhNn5g1_0yv99JTUDjs7y7yM",
 									"type": "string"
 								}
 							]
 						},
 						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"teamId\": 1\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "localhost:8080/api/tournaments/1/teams",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"tournaments",
-								"1",
-								"teams"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Remove Team from Tournament",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "some-token",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
 						"header": [],
 						"url": {
 							"raw": "localhost:8080/api/tournaments/1/teams/1",
@@ -513,6 +484,38 @@
 								"1",
 								"teams",
 								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Team from Tournament",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQHNvbWVlbWFpbC5jb20iLCJpYXQiOjE3NTA1MTM5NzAsImV4cCI6MTc1MDUxNzU3MH0.7wpuAGHS5Pe_nCQeCN2RhNn5g1_0yv99JTUDjs7y7yM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/tournaments/1/teams/2",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tournaments",
+								"1",
+								"teams",
+								"2"
 							]
 						}
 					},
@@ -534,7 +537,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "some-token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQHNvbWVlbWFpbC5jb20iLCJpYXQiOjE3NTA1MDc2OTAsImV4cCI6MTc1MDUxMTI5MH0.jtLTCEVbowmTSnzvG4TD8irt-7lo1XF0Xg1gB8_zOVU",
 											"type": "string"
 										}
 									]
@@ -543,7 +546,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"userId\": 1,\r\n    \"category\": \"amateur\",\r\n    \"secretCode\": \"lfkkdjfkji4884jfmnfjnf\"\r\n}",
+									"raw": "{\r\n    \"userId\": 1,\r\n    \"category\": \"AMATEUR\",\r\n    \"secretCode\": \"b68352c8e\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -574,7 +577,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "some-token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQHNvbWVlbWFpbC5jb20iLCJpYXQiOjE3NTA1MDc2OTAsImV4cCI6MTc1MDUxMTI5MH0.jtLTCEVbowmTSnzvG4TD8irt-7lo1XF0Xg1gB8_zOVU",
 											"type": "string"
 										}
 									]
@@ -605,7 +608,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "some-token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQHNvbWVlbWFpbC5jb20iLCJpYXQiOjE3NTA1MDc2OTAsImV4cCI6MTc1MDUxMTI5MH0.jtLTCEVbowmTSnzvG4TD8irt-7lo1XF0Xg1gB8_zOVU",
 											"type": "string"
 										}
 									]
@@ -637,7 +640,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "some-token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQHNvbWVlbWFpbC5jb20iLCJpYXQiOjE3NTA1MDQ3ODMsImV4cCI6MTc1MDUwODM4M30.Oju6iZmSu8Dl-pX4_ClN1bi2oF9mffMEBq0JdqQ3YA0",
 											"type": "string"
 										}
 									]
@@ -646,7 +649,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"userId\": 1,\r\n    \"category\": \"professional\"\r\n}",
+									"raw": "{\r\n    \"userId\": 1,\r\n    \"category\": \"PROFESSIONAL\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -677,7 +680,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "some-token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQHNvbWVlbWFpbC5jb20iLCJpYXQiOjE3NTA1MDQ3ODMsImV4cCI6MTc1MDUwODM4M30.Oju6iZmSu8Dl-pX4_ClN1bi2oF9mffMEBq0JdqQ3YA0",
 											"type": "string"
 										}
 									]
@@ -685,7 +688,7 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "localhost:8080/api/teams/1/participants/1",
+									"raw": "localhost:8080/api/teams/1/participants",
 									"host": [
 										"localhost"
 									],
@@ -694,8 +697,7 @@
 										"api",
 										"teams",
 										"1",
-										"participants",
-										"1"
+										"participants"
 									]
 								}
 							},
@@ -714,24 +716,15 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "some-token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQHNvbWVlbWFpbC5jb20iLCJpYXQiOjE3NTA1MDcyNzAsImV4cCI6MTc1MDUxMDg3MH0.-hDcTsLFEi70axEvDAQZxjOj_-w452bHih6x661LnUU",
 											"type": "string"
 										}
 									]
 								},
 								"method": "POST",
 								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"userId\": 1\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
 								"url": {
-									"raw": "localhost:8080/api/teams/1/followers",
+									"raw": "localhost:8080/api/teams/1/followers/1",
 									"host": [
 										"localhost"
 									],
@@ -740,7 +733,8 @@
 										"api",
 										"teams",
 										"1",
-										"followers"
+										"followers",
+										"1"
 									]
 								}
 							},
@@ -754,7 +748,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "some-token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQHNvbWVlbWFpbC5jb20iLCJpYXQiOjE3NTA1MDcyNzAsImV4cCI6MTc1MDUxMDg3MH0.-hDcTsLFEi70axEvDAQZxjOj_-w452bHih6x661LnUU",
 											"type": "string"
 										}
 									]
@@ -762,12 +756,13 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "localhost:8080/teams/1/followers/1",
+									"raw": "localhost:8080/api/teams/1/followers/1",
 									"host": [
 										"localhost"
 									],
 									"port": "8080",
 									"path": [
+										"api",
 										"teams",
 										"1",
 										"followers",
@@ -785,7 +780,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "some-token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQHNvbWVlbWFpbC5jb20iLCJpYXQiOjE3NTA1MDcyNzAsImV4cCI6MTc1MDUxMDg3MH0.-hDcTsLFEi70axEvDAQZxjOj_-w452bHih6x661LnUU",
 											"type": "string"
 										}
 									]
@@ -818,7 +813,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "some-token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQHNvbWVlbWFpbC5jb20iLCJpYXQiOjE3NTA1MDcwNzMsImV4cCI6MTc1MDUxMDY3M30.wAJJJ4S7Rau32TYZgImxYfl8SQcSVCktAsQQfPSMhQI",
 									"type": "string"
 								}
 							]
@@ -847,7 +842,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "some-token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQHNvbWVlbWFpbC5jb20iLCJpYXQiOjE3NTA1MTM5NzAsImV4cCI6MTc1MDUxNzU3MH0.7wpuAGHS5Pe_nCQeCN2RhNn5g1_0yv99JTUDjs7y7yM",
 									"type": "string"
 								}
 							]
@@ -1077,7 +1072,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"email\": \"example@someemail.com\",\r\n    \"password\": \"some-password\",\r\n    \"firstName\": \"New First Name\",\r\n    \"lastName\": \"New Last Name\",\r\n    \"birthDate\": \"2003-12-03\"\r\n}",
+									"raw": "{\r\n    \"email\": \"example@someemail.com\",\r\n    \"password\": \"some-password\",\r\n    \"firstName\": \"NewFirstName\",\r\n    \"lastName\": \"NewLastName\",\r\n    \"birthDate\": \"2003-12-03\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1138,7 +1133,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "some-token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQHNvbWVlbWFpbC5jb20iLCJpYXQiOjE3NTA0OTQ5MzQsImV4cCI6MTc1MDQ5ODUzNH0.mXio4K_yrY_ZO-eAOvvIhrQ1iSXBuZdGeduNoiz2RvQ",
 									"type": "string"
 								}
 							]
@@ -1168,7 +1163,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "some-token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQHNvbWVlbWFpbC5jb20iLCJpYXQiOjE3NTA0OTQ5MzQsImV4cCI6MTc1MDQ5ODUzNH0.mXio4K_yrY_ZO-eAOvvIhrQ1iSXBuZdGeduNoiz2RvQ",
 									"type": "string"
 								}
 							]
@@ -1177,7 +1172,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"id\": 1,\r\n    \"email\": \"example@someemail.com\",\r\n    \"password\": \"some-password\",\r\n    \"firstName\": \"New First Name\",\r\n    \"lastName\": \"New Last Name\",\r\n    \"profileImage\": \"some-url\",\r\n    \"birthDate\": \"2003-12-03\",\r\n    \"role\": \"user\" // admin\r\n}",
+							"raw": "{\r\n    \"id\": 1,\r\n    \"email\": \"example@someemail.com\",\r\n    \"password\": \"some-password\",\r\n    \"firstName\": \"NewFirstNameC\",\r\n    \"lastName\": \"NewLastNameC\",\r\n    \"profileImage\": \"some-url\",\r\n    \"birthDate\": \"2003-12-03\",\r\n    \"role\": \"user\" // admin\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1242,7 +1237,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "some-token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQHNvbWVlbWFpbC5jb20iLCJpYXQiOjE3NTA2MDI0NDcsImV4cCI6MTc1MDYwNjA0N30.RCtK1y5pA_FCH7gmVGWYFlxFfTqW8T2WuEo2-Vo6dxM",
 									"type": "string"
 								}
 							]
@@ -1271,7 +1266,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "some-token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQHNvbWVlbWFpbC5jb20iLCJpYXQiOjE3NTA2MDI0NDcsImV4cCI6MTc1MDYwNjA0N30.RCtK1y5pA_FCH7gmVGWYFlxFfTqW8T2WuEo2-Vo6dxM",
 									"type": "string"
 								}
 							]
@@ -1301,13 +1296,51 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "some-token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQHNvbWVlbWFpbC5jb20iLCJpYXQiOjE3NTA2MDI0NDcsImV4cCI6MTc1MDYwNjA0N30.RCtK1y5pA_FCH7gmVGWYFlxFfTqW8T2WuEo2-Vo6dxM",
 									"type": "string"
 								}
 							]
 						},
 						"method": "DELETE",
 						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/notifications",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"notifications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send notification",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQHNvbWVlbWFpbC5jb20iLCJpYXQiOjE3NTA2MDI0NDcsImV4cCI6MTc1MDYwNjA0N30.RCtK1y5pA_FCH7gmVGWYFlxFfTqW8T2WuEo2-Vo6dxM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"receiverId\": 1,\r\n    \"message\": \"Some test notification message!!!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "localhost:8080/api/notifications",
 							"host": [

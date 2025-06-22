@@ -1,5 +1,6 @@
 package fmi.sports.tournament.organizer.backend.services;
 
+import fmi.sports.tournament.organizer.backend.dtos.StandingDTO;
 import fmi.sports.tournament.organizer.backend.dtos.TeamDTO;
 import fmi.sports.tournament.organizer.backend.dtos.TournamentDTO;
 import fmi.sports.tournament.organizer.backend.entities.team.Team;
@@ -155,12 +156,28 @@ public class TournamentServiceImpl implements TournamentService {
                 .build());
     }
 
+    @Override
+    public List<StandingDTO> getTournamentStandings(Long tournamentId) {
+        getTournamentEntityById(tournamentId); // for validation purpose
+
+        return standingsRepository
+                .findByTournamentId(tournamentId)
+                .stream()
+                .map(StandingDTO::fromEntity)
+                .sorted((lhs, rhs) -> {
+                    if (lhs.getPoints().equals(rhs.getPoints())) {
+                        return lhs.getTeamId().compareTo(rhs.getTeamId());
+                    }
+
+                    return lhs.getPoints().compareTo(rhs.getPoints()) * -1; // for reverse order
+                })
+                .collect(Collectors.toList());
+    }
+
     private Tournament getTournamentEntityById(Long tournamentId) {
         return tournamentsRepository.findById(tournamentId).orElseThrow(
                 () -> new NoTournamentWithSuchIdException(String.format("Tournament with id %d does not exist", tournamentId))
         );
-
-
     }
 
     private Team getTeamEntityById(Long teamId) {

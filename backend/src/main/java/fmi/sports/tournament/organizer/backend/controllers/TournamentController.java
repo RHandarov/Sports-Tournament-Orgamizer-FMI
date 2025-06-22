@@ -3,6 +3,7 @@ package fmi.sports.tournament.organizer.backend.controllers;
 import fmi.sports.tournament.organizer.backend.dtos.TeamDTO;
 import fmi.sports.tournament.organizer.backend.dtos.TournamentDTO;
 import fmi.sports.tournament.organizer.backend.response.ResponseResult;
+import fmi.sports.tournament.organizer.backend.response.StandingResponse;
 import fmi.sports.tournament.organizer.backend.response.TeamResponse;
 import fmi.sports.tournament.organizer.backend.response.TournamentResponse;
 import fmi.sports.tournament.organizer.backend.services.TournamentService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/tournaments")
@@ -110,5 +112,14 @@ public class TournamentController {
                         .message(String.format("Team with id %d successfully unregistered for tournament with id %d.", teamId, tournamentId))
                         .build()
         );
+    }
+
+    @GetMapping("/{tournamentId}/standings")
+    public List<StandingResponse> getTournamentStandings(@PathVariable("tournamentId") Long tournamentId) {
+        return tournamentService
+                .getTournamentStandings(tournamentId)
+                .stream()
+                .map(standingDTO -> StandingResponse.fromDTO(standingDTO).build())
+                .collect(Collectors.toList());
     }
 }

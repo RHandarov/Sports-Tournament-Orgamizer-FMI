@@ -111,6 +111,15 @@ public class GlobalExceptionHandler {
                         .build());
     }
 
+    @ExceptionHandler(NoUserWithSuchIdException.class)
+    public ResponseEntity<LoginResponse> handleNoUserWithSuchIdException(NoUserWithSuchIdException ex) {
+        return ResponseEntity.badRequest()
+                .body(LoginResponse.builder()
+                        .responseResult(ResponseResult.NOT_EXISTING_USER)
+                        .message(ex.getMessage())
+                        .build());
+    }
+
     @ExceptionHandler(IncorrectPasswordException.class)
     public ResponseEntity<LoginResponse> handelIncorrectPasswordException(IncorrectPasswordException ex) {
         return ResponseEntity.badRequest()
