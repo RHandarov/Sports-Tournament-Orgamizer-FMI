@@ -6,9 +6,11 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Builder
 @Table(name = "matches")
@@ -36,10 +38,6 @@ public class Match {
     @Enumerated(EnumType.STRING)
     private MatchStatus status;
 
-    public Match() {
-
-    }
-
     public Match(Tournament tournament,
                  Team team1,
                  Team team2,
@@ -51,69 +49,5 @@ public class Match {
         this.team2Points = 0;
         this.venue = venue;
         this.status = MatchStatus.ONGOING;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Tournament getTournament() {
-        return tournament;
-    }
-
-    public Team getTeam1() {
-        return team1;
-    }
-
-    public Integer getTeam1Points() {
-        return team1Points;
-    }
-
-    public Team getTeam2() {
-        return team2;
-    }
-
-    public Integer getTeam2Points() {
-        return team2Points;
-    }
-
-    public String getVenue() {
-        return venue;
-    }
-
-    public MatchStatus getStatus() {
-        return status;
-    }
-
-    public void setTeam1Points(Integer team1Points) {
-        this.team1Points = team1Points;
-    }
-
-    public void setTeam2Points(Integer team2Points) {
-        this.team2Points = team2Points;
-    }
-
-    public void setVenue(String venue) {
-        this.venue = venue;
-    }
-
-    public void setStatus(MatchStatus status) {
-        this.status = status;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setTournament(Tournament tournament) {
-        this.tournament = tournament;
-    }
-
-    public void setTeam1(Team team1) {
-        this.team1 = team1;
-    }
-
-    public void setTeam2(Team team2) {
-        this.team2 = team2;
     }
 }

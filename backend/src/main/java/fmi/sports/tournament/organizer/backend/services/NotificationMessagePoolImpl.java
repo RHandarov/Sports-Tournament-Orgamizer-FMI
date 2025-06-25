@@ -1,7 +1,7 @@
 package fmi.sports.tournament.organizer.backend.services;
 
 import fmi.sports.tournament.organizer.backend.entities.notification.NotificationMessage;
-import fmi.sports.tournament.organizer.backend.repositories.NotificationMessageRepository;
+import fmi.sports.tournament.organizer.backend.repositories.notification.NotificationMessagesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,17 +9,17 @@ import java.util.Optional;
 
 @Service
 public class NotificationMessagePoolImpl implements NotificationMessagePool {
-    private final NotificationMessageRepository notificationMessageRepository;
+    private final NotificationMessagesRepository notificationMessagesRepository;
 
     @Autowired
-    public NotificationMessagePoolImpl(NotificationMessageRepository notificationMessageRepository) {
-        this.notificationMessageRepository = notificationMessageRepository;
+    public NotificationMessagePoolImpl(NotificationMessagesRepository notificationMessagesRepository) {
+        this.notificationMessagesRepository = notificationMessagesRepository;
     }
 
     @Override
     public NotificationMessage getNotificationMessage(String message) {
         Optional<NotificationMessage> notificationMessage =
-                notificationMessageRepository.findByMessageContent(message);
-        return notificationMessage.orElseGet(() -> notificationMessageRepository.save(new NotificationMessage(message)));
+                notificationMessagesRepository.findByMessageContent(message);
+        return notificationMessage.orElseGet(() -> notificationMessagesRepository.save(new NotificationMessage(message)));
     }
 }

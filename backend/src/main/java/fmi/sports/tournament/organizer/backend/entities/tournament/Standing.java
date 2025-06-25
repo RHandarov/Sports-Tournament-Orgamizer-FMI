@@ -31,28 +31,4 @@ public class Standing {
     @JoinColumn(name = "team_id")
     private Team team;
     private Integer points;
-
-    public Tournament getTournament() {
-        return tournament;
-    }
-
-    public Team getTeam() {
-        return team;
-    }
-
-    public Integer getPoints() {
-        return points;
-    }
-
-    public void setPoints(Integer points) {
-        this.points = points;
-    }
-
-    public void setTournament(Tournament tournament) {
-        this.tournament = tournament;
-    }
-
-    public void setTeam(Team team) {
-        this.team = team;
-    }
 }

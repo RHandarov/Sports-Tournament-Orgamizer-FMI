@@ -3,7 +3,6 @@ package fmi.sports.tournament.organizer.backend.services;
 import fmi.sports.tournament.organizer.backend.dtos.StandingDTO;
 import fmi.sports.tournament.organizer.backend.dtos.TeamDTO;
 import fmi.sports.tournament.organizer.backend.dtos.TournamentDTO;
-import fmi.sports.tournament.organizer.backend.entities.tournament.Tournament;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

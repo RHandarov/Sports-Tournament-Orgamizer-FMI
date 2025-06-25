@@ -2,10 +2,10 @@ package fmi.sports.tournament.organizer.backend.controllers;
 
 import fmi.sports.tournament.organizer.backend.dtos.TeamDTO;
 import fmi.sports.tournament.organizer.backend.dtos.TournamentDTO;
-import fmi.sports.tournament.organizer.backend.response.ResponseResult;
-import fmi.sports.tournament.organizer.backend.response.StandingResponse;
-import fmi.sports.tournament.organizer.backend.response.TeamResponse;
-import fmi.sports.tournament.organizer.backend.response.TournamentResponse;
+import fmi.sports.tournament.organizer.backend.responses.ResponseResult;
+import fmi.sports.tournament.organizer.backend.responses.StandingResponse;
+import fmi.sports.tournament.organizer.backend.responses.TeamResponse;
+import fmi.sports.tournament.organizer.backend.responses.TournamentResponse;
 import fmi.sports.tournament.organizer.backend.services.TournamentService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -28,13 +27,19 @@ public class TournamentController {
     }
 
     @GetMapping
-    public List<TournamentDTO> getAll() {
-        return tournamentService.getAll();
+    public List<TournamentResponse> getAll() {
+        return tournamentService
+                .getAll()
+                .stream()
+                .map(tournamentDTO -> TournamentResponse
+                        .fromDTO(tournamentDTO)
+                        .responseResult(ResponseResult.SUCCESSFULLY_FOUND)
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<TournamentResponse> getById(@PathVariable("id") Long tournamentId) {
-
         TournamentDTO tournamentDTO = tournamentService.getById(tournamentId);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 TournamentResponse
@@ -58,7 +63,6 @@ public class TournamentController {
     @PutMapping("/{id}")
     public ResponseEntity<TournamentResponse> update(@Valid @RequestBody TournamentDTO updatedTournament, @PathVariable long id) {
         tournamentService.updateById(updatedTournament, id);
-
         return ResponseEntity.ok(
                 TournamentResponse
                         .fromDTO(updatedTournament)
@@ -79,18 +83,22 @@ public class TournamentController {
     }
 
     @GetMapping("/{id}/teams")
-    public ResponseEntity<List<TeamDTO>> getAllParticipatingTeams(@PathVariable("id") Long tournamentId) {
+    public List<TeamResponse> getAllParticipatingTeams(@PathVariable("id") Long tournamentId) {
         List<TeamDTO> teams = tournamentService.getAllParticipatingTeams(tournamentId);
-        return ResponseEntity.ok(teams);
+        return teams
+                .stream()
+                .map(teamDTO -> TeamResponse
+                        .fromDTO(teamDTO)
+                        .responseResult(ResponseResult.SUCCESSFULLY_FOUND)
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @PostMapping("/{tournamentId}/teams/{teamId}")
     public ResponseEntity<TeamResponse> registerTeamForParticipation(
             @PathVariable("tournamentId") Long tournamentId,
             @PathVariable("teamId") Long teamId) {
-
         tournamentService.registerTeamForParticipation(tournamentId, teamId);
-
         return ResponseEntity.ok(
                 TeamResponse.builder()
                         .responseResult(ResponseResult.SUCCESSFULLY_REGISTERED)
@@ -103,9 +111,7 @@ public class TournamentController {
     public ResponseEntity<TeamResponse> unregisterTeamForParticipation(
             @PathVariable("tournamentId") Long tournamentId,
             @PathVariable("teamId") Long teamId) {
-
         tournamentService.unregisterTeamForParticipation(tournamentId, teamId);
-
         return ResponseEntity.ok(
                 TeamResponse.builder()
                         .responseResult(ResponseResult.SUCCESSFULLY_UNREGISTERED)

@@ -4,7 +4,6 @@ import fmi.sports.tournament.organizer.backend.dtos.CredentialsDTO;
 import fmi.sports.tournament.organizer.backend.dtos.LoginDTO;
 import fmi.sports.tournament.organizer.backend.dtos.NewUserDTO;
 import fmi.sports.tournament.organizer.backend.dtos.UserDTO;
-import fmi.sports.tournament.organizer.backend.entities.user.User;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 

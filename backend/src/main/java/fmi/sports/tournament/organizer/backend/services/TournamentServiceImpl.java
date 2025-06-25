@@ -7,7 +7,12 @@ import fmi.sports.tournament.organizer.backend.entities.team.Team;
 import fmi.sports.tournament.organizer.backend.entities.tournament.Standing;
 import fmi.sports.tournament.organizer.backend.entities.tournament.StandingId;
 import fmi.sports.tournament.organizer.backend.entities.tournament.Tournament;
-import fmi.sports.tournament.organizer.backend.exceptions.*;
+import fmi.sports.tournament.organizer.backend.exceptions.team.NoTeamWithSuchIdException;
+import fmi.sports.tournament.organizer.backend.exceptions.time.InappropriateMomentException;
+import fmi.sports.tournament.organizer.backend.exceptions.tournament.NoPlacesAvailableException;
+import fmi.sports.tournament.organizer.backend.exceptions.tournament.NoSufficientMoneyException;
+import fmi.sports.tournament.organizer.backend.exceptions.tournament.NoTournamentWithSuchIdException;
+import fmi.sports.tournament.organizer.backend.exceptions.team.TeamAlreadyRegisteredException;
 import fmi.sports.tournament.organizer.backend.repositories.StandingsRepository;
 import fmi.sports.tournament.organizer.backend.repositories.TeamsRepository;
 import fmi.sports.tournament.organizer.backend.repositories.TournamentsRepository;
@@ -17,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,7 +41,6 @@ public class TournamentServiceImpl implements TournamentService {
 
     @Override
     public TournamentDTO create(TournamentDTO newTournament) {
-
         Tournament entity = new Tournament(newTournament.getName(),
                 newTournament.getLocation(),
                 newTournament.getSportType(),
@@ -185,5 +188,4 @@ public class TournamentServiceImpl implements TournamentService {
                 () -> new NoTeamWithSuchIdException(String.format("Team with id %d doesn't exist!", teamId))
         );
     }
-
 }

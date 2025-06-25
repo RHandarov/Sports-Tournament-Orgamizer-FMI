@@ -6,7 +6,9 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.Data;
 
+@Data
 public class TeamDTO {
     private static final Long ID_NOT_SET = -1L;
 
@@ -53,54 +55,6 @@ public class TeamDTO {
         this.email = email;
         this.budget = budget;
         this.size = size;
-        this.secretCode = secretCode;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public Double getBudget() {
-        return budget;
-    }
-
-    public Integer getSize() {
-        return size;
-    }
-
-    public String getSecretCode() {
-        return secretCode;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setBudget(Double budget) {
-        this.budget = budget;
-    }
-
-    public void setSize(Integer size) {
-        this.size = size;
-    }
-
-    public void setSecretCode(String secretCode) {
         this.secretCode = secretCode;
     }
 }

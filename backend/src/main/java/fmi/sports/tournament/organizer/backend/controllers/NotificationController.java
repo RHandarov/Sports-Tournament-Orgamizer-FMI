@@ -2,8 +2,8 @@ package fmi.sports.tournament.organizer.backend.controllers;
 
 import fmi.sports.tournament.organizer.backend.dtos.NewNotificationDTO;
 import fmi.sports.tournament.organizer.backend.entities.user.User;
-import fmi.sports.tournament.organizer.backend.response.NotificationResponse;
-import fmi.sports.tournament.organizer.backend.response.ResponseResult;
+import fmi.sports.tournament.organizer.backend.responses.NotificationResponse;
+import fmi.sports.tournament.organizer.backend.responses.ResponseResult;
 import fmi.sports.tournament.organizer.backend.services.JWTService;
 import fmi.sports.tournament.organizer.backend.services.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;

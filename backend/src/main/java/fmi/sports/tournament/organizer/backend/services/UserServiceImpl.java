@@ -6,18 +6,16 @@ import fmi.sports.tournament.organizer.backend.dtos.NewUserDTO;
 import fmi.sports.tournament.organizer.backend.dtos.UserDTO;
 import fmi.sports.tournament.organizer.backend.entities.user.User;
 import fmi.sports.tournament.organizer.backend.entities.user.UserRole;
-import fmi.sports.tournament.organizer.backend.exceptions.IncorrectPasswordException;
-import fmi.sports.tournament.organizer.backend.exceptions.NoUserWithSuchEmailException;
-import fmi.sports.tournament.organizer.backend.exceptions.NoUserWithSuchIdException;
-import fmi.sports.tournament.organizer.backend.exceptions.UserAlreadyExistsException;
+import fmi.sports.tournament.organizer.backend.exceptions.user.auth.IncorrectPasswordException;
+import fmi.sports.tournament.organizer.backend.exceptions.user.NoUserWithSuchEmailException;
+import fmi.sports.tournament.organizer.backend.exceptions.user.NoUserWithSuchIdException;
+import fmi.sports.tournament.organizer.backend.exceptions.user.UserAlreadyExistsException;
 import fmi.sports.tournament.organizer.backend.repositories.SessionsRepository;
 import fmi.sports.tournament.organizer.backend.repositories.UsersRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -115,7 +113,5 @@ public class UserServiceImpl implements UserService {
 
         usersRepository.save(user);
         usersRepository.deleteById(id);
-
-
     }
 }

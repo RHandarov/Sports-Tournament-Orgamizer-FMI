@@ -6,11 +6,11 @@ import fmi.sports.tournament.organizer.backend.entities.team.Participant;
 import fmi.sports.tournament.organizer.backend.entities.team.Team;
 import fmi.sports.tournament.organizer.backend.entities.tournament.Tournament;
 import fmi.sports.tournament.organizer.backend.entities.user.User;
-import fmi.sports.tournament.organizer.backend.exceptions.*;
-import fmi.sports.tournament.organizer.backend.repositories.ParticipantRepository;
+import fmi.sports.tournament.organizer.backend.exceptions.team.*;
+import fmi.sports.tournament.organizer.backend.exceptions.user.NoUserWithSuchIdException;
+import fmi.sports.tournament.organizer.backend.repositories.ParticipantsRepository;
 import fmi.sports.tournament.organizer.backend.repositories.TeamsRepository;
 import fmi.sports.tournament.organizer.backend.repositories.UsersRepository;
-import jakarta.servlet.http.Part;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,18 +26,17 @@ public class TeamServiceImpl implements TeamService {
 
     private final TeamsRepository teamsRepository;
     private final UsersRepository userRepository;
-    private final ParticipantRepository participantRepository;
+    private final ParticipantsRepository participantsRepository;
 
     @Autowired
-    public TeamServiceImpl(TeamsRepository teamsRepository, UsersRepository userRepository, ParticipantRepository participantRepository) {
+    public TeamServiceImpl(TeamsRepository teamsRepository, UsersRepository userRepository, ParticipantsRepository participantsRepository) {
         this.teamsRepository = teamsRepository;
         this.userRepository = userRepository;
-        this.participantRepository = participantRepository;
+        this.participantsRepository = participantsRepository;
     }
 
     @Override
     public TeamDTO create(TeamDTO newTeam) {
-
         Team newEntity = new Team(newTeam.getName(),
                 newTeam.getEmail(),
                 newTeam.getBudget(),
@@ -88,7 +87,7 @@ public class TeamServiceImpl implements TeamService {
 
         team.getTournaments().clear();
 
-        participantRepository.deleteByTeamId(teamId);
+        participantsRepository.deleteByTeamId(teamId);
         team.getParticipants().clear();
 
         teamsRepository.save(team);
@@ -104,24 +103,21 @@ public class TeamServiceImpl implements TeamService {
         User user = getUserEntityById(userId);
         Team team = getTeamEntityById(teamId);
 
-
         if (!team.getSecretCode().equals(participantRegisterDTO.getSecretCode())) {
             throw new InvalidSecretCodeException(String.format("Invalid secret code for team with id %d", teamId));
         }
-
 
         if (team.getParticipants().stream().map(Participant::getUser).toList().contains(user)) {
             throw new UserAlreadyRegisteredForTeamException(String.format("User with id %d is already registered for team with id %d", userId, teamId));
         }
 
-        Optional<Participant> participantByUserId = participantRepository.findByUserId(userId);
+        Optional<Participant> participantByUserId = participantsRepository.findByUserId(userId);
         participantByUserId.ifPresent(participant -> {
             if (!teamId.equals(participantByUserId.get().getTeam().getId())) {
                 throw new UserAlreadyRegisteredForAnotherTeamException(String.format(
                         "User with id %d is already registered for a different team",userId));
             }
         });
-
 
         if (team.getParticipants().size() >= team.getSize()) {
             throw new TeamAlreadyAtMaxSizeException(String.format("Team with id %d is already at full size", teamId));
@@ -150,6 +146,7 @@ public class TeamServiceImpl implements TeamService {
         if (list.isEmpty()) {
             throw new UserNotInTeamException(String.format("User with id %d is not in team with id %d", userId, teamId));
         }
+
         Participant participant = list.getFirst();
 
         participant.setTeam(null);
@@ -160,7 +157,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<ParticipantDTO> getAllParticipantsForTeam(Long teamId) {
-        return participantRepository.findAllByTeamId(teamId)
+        return participantsRepository.findAllByTeamId(teamId)
                 .stream()
                 .map(ParticipantDTO::fromEntity)
                 .collect(Collectors.toList());
@@ -178,11 +175,11 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public ParticipantDTO updateParticipantCategory(Long teamId, ChangeParticipantCategoryDTO participantCategoryDTO) {
         Participant participant =
-                participantRepository.findByTeamIdAndUserId(teamId, participantCategoryDTO.getUserId())
+                participantsRepository.findByTeamIdAndUserId(teamId, participantCategoryDTO.getUserId())
                         .orElseThrow(() -> new NoParticipantWithIdException(participantCategoryDTO.getUserId()));
 
         participant.setCategory(participantCategoryDTO.getParticipantCategory());
-        return ParticipantDTO.fromEntity(participantRepository.save(participant));
+        return ParticipantDTO.fromEntity(participantsRepository.save(participant));
     }
 
     @Override
@@ -221,6 +218,4 @@ public class TeamServiceImpl implements TeamService {
                 () -> new NoUserWithSuchIdException(String.format("User with id %d does not exist", userId))
         );
     }
-
-
 }

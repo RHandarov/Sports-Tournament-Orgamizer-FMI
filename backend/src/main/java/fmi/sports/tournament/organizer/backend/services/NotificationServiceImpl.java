@@ -5,15 +5,14 @@ import fmi.sports.tournament.organizer.backend.dtos.NotificationDTO;
 import fmi.sports.tournament.organizer.backend.entities.notification.Notification;
 import fmi.sports.tournament.organizer.backend.entities.notification.NotificationMessage;
 import fmi.sports.tournament.organizer.backend.entities.user.User;
-import fmi.sports.tournament.organizer.backend.exceptions.NoUserWithSuchIdException;
-import fmi.sports.tournament.organizer.backend.repositories.NotificationsRepository;
+import fmi.sports.tournament.organizer.backend.exceptions.user.NoUserWithSuchIdException;
+import fmi.sports.tournament.organizer.backend.repositories.notification.NotificationsRepository;
 import fmi.sports.tournament.organizer.backend.repositories.UsersRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service

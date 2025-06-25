@@ -14,7 +14,6 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class NewUserDTO {
-
     @Email(message = "Not a valid Email pattern")
     private String email;
 

@@ -4,9 +4,9 @@ import fmi.sports.tournament.organizer.backend.dtos.NewUserDTO;
 import fmi.sports.tournament.organizer.backend.dtos.UserDTO;
 import fmi.sports.tournament.organizer.backend.entities.user.User;
 import fmi.sports.tournament.organizer.backend.entities.user.UserRole;
-import fmi.sports.tournament.organizer.backend.response.ProfileResponse;
-import fmi.sports.tournament.organizer.backend.response.ResponseResult;
-import fmi.sports.tournament.organizer.backend.response.UserResponse;
+import fmi.sports.tournament.organizer.backend.responses.ProfileResponse;
+import fmi.sports.tournament.organizer.backend.responses.ResponseResult;
+import fmi.sports.tournament.organizer.backend.responses.UserResponse;
 import fmi.sports.tournament.organizer.backend.services.JWTService;
 import fmi.sports.tournament.organizer.backend.services.UserService;
 import jakarta.validation.Valid;
@@ -19,7 +19,6 @@ import java.time.LocalDate;
 @RestController
 @RequestMapping("/api/profiles")
 public class ProfileController {
-
     private final JWTService jwtService;
     private final UserService userService;
 
@@ -31,10 +30,8 @@ public class ProfileController {
 
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getProfile(@RequestHeader("Authorization") String authorizationHeader) {
-
         String token = authorizationHeader.startsWith("Bearer ") ?
                 authorizationHeader.substring(7) : authorizationHeader;
-
         UserDTO user = jwtService.getUserDTO(token);
 
         return ResponseEntity.ok(
@@ -48,7 +45,6 @@ public class ProfileController {
     @PutMapping("/me")
     public ResponseEntity<ProfileResponse> getProfile(@RequestHeader("Authorization") String authorizationHeader,
                                                       @Valid @RequestBody NewUserDTO newUserInfo) {
-
         String token = authorizationHeader.startsWith("Bearer ") ?
                 authorizationHeader.substring(7) : authorizationHeader;
 
@@ -56,6 +52,7 @@ public class ProfileController {
         LocalDate creationDate = user.getCreationDate();
         UserRole userRole = user.getRole();
         Long id = user.getId();
+
         userService.updateUserInfo(id, newUserInfo);
 
         return ResponseEntity.ok(
@@ -71,10 +68,8 @@ public class ProfileController {
 
     @DeleteMapping("/me")
     public ResponseEntity<ProfileResponse> deleteProfile(@RequestHeader("Authorization") String authorizationHeader) {
-
         String token = authorizationHeader.startsWith("Bearer ") ?
                 authorizationHeader.substring(7) : authorizationHeader;
-
         User user = jwtService.getUser(token);
         Long id = user.getId();
         userService.deleteUser(id);

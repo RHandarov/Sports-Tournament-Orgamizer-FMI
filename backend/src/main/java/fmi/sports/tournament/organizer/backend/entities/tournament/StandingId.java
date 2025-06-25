@@ -1,6 +1,5 @@
 package fmi.sports.tournament.organizer.backend.entities.tournament;
 
-import fmi.sports.tournament.organizer.backend.entities.team.Team;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

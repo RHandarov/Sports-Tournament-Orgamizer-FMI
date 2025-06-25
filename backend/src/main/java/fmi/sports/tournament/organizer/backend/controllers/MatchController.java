@@ -2,9 +2,8 @@ package fmi.sports.tournament.organizer.backend.controllers;
 
 import fmi.sports.tournament.organizer.backend.dtos.MatchDTO;
 import fmi.sports.tournament.organizer.backend.dtos.MatchResultsDTO;
-import fmi.sports.tournament.organizer.backend.entities.tournament.match.Match;
-import fmi.sports.tournament.organizer.backend.response.MatchResponse;
-import fmi.sports.tournament.organizer.backend.response.ResponseResult;
+import fmi.sports.tournament.organizer.backend.responses.MatchResponse;
+import fmi.sports.tournament.organizer.backend.responses.ResponseResult;
 import fmi.sports.tournament.organizer.backend.services.MatchService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/tournaments/{tId}/matches")
@@ -39,8 +38,15 @@ public class MatchController {
     }
 
     @GetMapping
-    public List<MatchDTO> getAllMatchedForTournament( @PathVariable("tId") Long tournamentId) {
-        return matchService.getAllForTournament(tournamentId);
+    public List<MatchResponse> getAllMatchedForTournament(@PathVariable("tId") Long tournamentId) {
+        return matchService
+                .getAllForTournament(tournamentId)
+                .stream()
+                .map(matchDTO -> MatchResponse
+                        .fromDTO(matchDTO)
+                        .responseResult(ResponseResult.SUCCESSFULLY_FOUND)
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{mId}")

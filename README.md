@@ -127,6 +127,7 @@ The API is structured around RESTful principles. Below are some of the key endpo
 * `GET /api/notifications` - Get all notifications for the current user.
 * `GET /api/notifications/new` - Get all unread notifications for the current user.
 * `DELETE /api/notifications` - Delete all notifications for the current user.
+* `POST /api/notifications` - Send a notification from current user to another one.
 
 ## Getting Started
 

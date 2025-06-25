@@ -10,20 +10,17 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-//@Component
 public class AuthFilter extends OncePerRequestFilter {
     private static final int PREFIX_LENGTH = 7;
-
     private static final String BAD_AUTHORIZATION_MESSAGE  = """
             {
                 "message": "Access denied",
                 "responseResult": "FORBIDDEN"
             }
             """;
-
+    private static final String AUTH_API_PATH = "/api/auth";
 
     private final JWTService jwtService;
-
 
     @Autowired
     public AuthFilter(JWTService jwtService) {
@@ -33,7 +30,6 @@ public class AuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = request.getHeader("Authorization");
-
         if (token == null
                 || !token.startsWith("Bearer ")
                 || !jwtService.isTokenValid(token.substring(PREFIX_LENGTH))) {
@@ -47,7 +43,7 @@ public class AuthFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return request.getRequestURI().startsWith("/api/auth");
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return request.getRequestURI().startsWith(AUTH_API_PATH);
     }
 }

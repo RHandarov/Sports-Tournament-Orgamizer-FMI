@@ -2,10 +2,10 @@ package fmi.sports.tournament.organizer.backend.controllers;
 
 import fmi.sports.tournament.organizer.backend.dtos.*;
 import fmi.sports.tournament.organizer.backend.entities.user.User;
-import fmi.sports.tournament.organizer.backend.response.ParticipantResponse;
-import fmi.sports.tournament.organizer.backend.response.ResponseResult;
-import fmi.sports.tournament.organizer.backend.response.TeamResponse;
-import fmi.sports.tournament.organizer.backend.response.UserResponse;
+import fmi.sports.tournament.organizer.backend.responses.ParticipantResponse;
+import fmi.sports.tournament.organizer.backend.responses.ResponseResult;
+import fmi.sports.tournament.organizer.backend.responses.TeamResponse;
+import fmi.sports.tournament.organizer.backend.responses.UserResponse;
 import fmi.sports.tournament.organizer.backend.services.JWTService;
 import fmi.sports.tournament.organizer.backend.services.TeamService;
 import jakarta.validation.Valid;
@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -31,8 +30,15 @@ public class TeamController {
     }
 
     @GetMapping
-    public List<TeamDTO> getAll() {
-        return teamService.getAll();
+    public List<TeamResponse> getAll() {
+        return teamService
+                .getAll()
+                .stream()
+                .map(teamDTO -> TeamResponse
+                        .fromDTO(teamDTO)
+                        .responseResult(ResponseResult.SUCCESSFULLY_FOUND)
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
@@ -51,16 +57,16 @@ public class TeamController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(
-                        TeamResponse.fromDTO(teamDTO).responseResult(ResponseResult.SUCCESSFULLY_CREATED)
+                        TeamResponse
+                                .fromDTO(teamDTO)
+                                .responseResult(ResponseResult.SUCCESSFULLY_CREATED)
                                 .build()
                 );
     }
 
     @PutMapping
     public ResponseEntity<TeamResponse> update(@Valid @RequestBody TeamDTO updatedTeams) {
-
         TeamDTO updated = teamService.update(updatedTeams);
-
         return ResponseEntity.ok(
                 TeamResponse
                         .fromDTO(updated)
@@ -83,24 +89,19 @@ public class TeamController {
     @PostMapping("/{teamId}/participants")
     public ResponseEntity<String> registerUserForTeam(@RequestHeader("Authorization") String authorizationHeader,
                                                       @RequestBody ParticipantRegisterDTO participantRegisterDTO, @PathVariable("teamId") Long teamId) {
-
         String token = authorizationHeader.startsWith("Bearer ") ?
                 authorizationHeader.substring(7) : authorizationHeader;
-
         User user = jwtService.getUser(token);
         Long userId = user.getId();
         teamService.registerUserForTeam(userId, teamId, participantRegisterDTO);
-
         return ResponseEntity.ok("User successfully registered for team with id " + teamId);
     }
 
     @DeleteMapping("/{teamId}/participants")
     public ResponseEntity<TeamResponse> removeUserFromTeam(@RequestHeader("Authorization") String authorizationHeader,
-                                                    @PathVariable("teamId") Long teamId) {
-
+                                                           @PathVariable("teamId") Long teamId) {
         String token = authorizationHeader.startsWith("Bearer ") ?
                 authorizationHeader.substring(7) : authorizationHeader;
-
         User user = jwtService.getUser(token);
         Long userId = user.getId();
         teamService.removeUserForTeam(userId, teamId);
@@ -125,7 +126,7 @@ public class TeamController {
 
     @GetMapping("/{teamId}/participants/{participantId}")
     public ResponseEntity<ParticipantResponse> getParticipantForTeamById(@PathVariable("teamId") Long teamId,
-                                                                  @PathVariable("participantId") Long participantId) {
+                                                                         @PathVariable("participantId") Long participantId) {
         ParticipantDTO participant = teamService.getParticipantInTeamById(teamId, participantId);
         return ResponseEntity.ok()
                 .body(ParticipantResponse

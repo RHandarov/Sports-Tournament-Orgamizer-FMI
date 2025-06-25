@@ -5,6 +5,8 @@ import fmi.sports.tournament.organizer.backend.entities.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
@@ -12,6 +14,8 @@ import java.util.Set;
 @Table(name = "teams")
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class Team {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,7 +25,6 @@ public class Team {
     private Double budget;
     private Integer size;
     private String secretCode;
-    //TODO: add other columns in DB model
 
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Participant> participants;
@@ -31,11 +34,6 @@ public class Team {
 
     @ManyToMany(mappedBy = "teams", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Tournament> tournaments;
-
-
-    public Team() {
-
-    }
 
     public Team(String name,
                 String email,
@@ -47,73 +45,5 @@ public class Team {
         this.budget = budget;
         this.size = size;
         this.secretCode = secretCode;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public Double getBudget() {
-        return budget;
-    }
-
-    public Integer getSize() {
-        return size;
-    }
-
-    public String getSecretCode() {
-        return secretCode;
-    }
-
-    public Set<Participant> getParticipants() {
-        return participants;
-    }
-
-    public Set<User> getFollowers() {
-        return followers;
-    }
-
-    public Set<Tournament> getTournaments() {
-        return tournaments;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setBudget(Double budget) {
-        this.budget = budget;
-    }
-
-    public void setSize(Integer size) {
-        this.size = size;
-    }
-
-    public void setSecretCode(String secretCode) {
-        this.secretCode = secretCode;
-    }
-
-    public void setParticipants(Set<Participant> participants) {
-        this.participants = participants;
-    }
-
-    public void setFollowers(Set<User> followers) {
-        this.followers = followers;
-    }
-
-    public void setTournaments(Set<Tournament> tournaments) {
-        this.tournaments = tournaments;
     }
 }

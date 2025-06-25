@@ -5,7 +5,9 @@ import fmi.sports.tournament.organizer.backend.entities.tournament.match.MatchSt
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.Data;
 
+@Data
 public class MatchDTO {
     public static final Long ID_NOT_SET = -1L;
 
@@ -18,13 +20,11 @@ public class MatchDTO {
                 match.getVenue(),
                 match.getStatus());
         dto.setId(match.getId());
-
         return dto;
     }
 
     private Long id;
 
-//    @NotNull(message = "Tournament ID is required")
     @Positive(message = "Tournament ID must be a positive number")
     private Long tournamentId;
 
@@ -72,69 +72,5 @@ public class MatchDTO {
         this.team2Points = team2Points;
         this.venue = venue;
         this.status = status;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Long getTournamentId() {
-        return tournamentId;
-    }
-
-    public Long getTeam1Id() {
-        return team1Id;
-    }
-
-    public Integer getTeam1Points() {
-        return team1Points;
-    }
-
-    public Long getTeam2Id() {
-        return team2Id;
-    }
-
-    public Integer getTeam2Points() {
-        return team2Points;
-    }
-
-    public String getVenue() {
-        return venue;
-    }
-
-    public MatchStatus getStatus() {
-        return status;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setTournamentId(Long tournamentId) {
-        this.tournamentId = tournamentId;
-    }
-
-    public void setTeam1Points(Integer team1Points) {
-        this.team1Points = team1Points;
-    }
-
-    public void setTeam2Points(Integer team2Points) {
-        this.team2Points = team2Points;
-    }
-
-    public void setVenue(String venue) {
-        this.venue = venue;
-    }
-
-    public void setStatus(MatchStatus status) {
-        this.status = status;
-    }
-
-    public void setTeam1Id(Long team1Id) {
-        this.team1Id = team1Id;
-    }
-
-    public void setTeam2Id(Long team2Id) {
-        this.team2Id = team2Id;
     }
 }
