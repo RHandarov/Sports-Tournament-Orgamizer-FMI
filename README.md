@@ -143,8 +143,8 @@ The API is structured around RESTful principles. Below are some of the key endpo
 1.  **Clone the repository:**
 
     ```bash
-    git clone [https://github.com/your-username/sports-tournament-organizer.git](https://github.com/your-username/sports-tournament-organizer.git)
-    cd sports-tournament-organizer
+    git clone https://github.com/RHandarov/Sports-Tournament-Orgamizer-FMI.git
+    cd Sports-Tournament-Orgamizer-FMI
     ```
 
 2.  **Configure the database:**
